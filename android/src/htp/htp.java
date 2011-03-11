@@ -79,7 +79,7 @@ final public class htp{
 				server_port=args[0];
 		}
 		final File rootdir=new File(root_dir);
-//		if(!rootdir.exists()){
+		if(!rootdir.exists()){
 			if(!rootdir.exists()&&!rootdir.mkdirs())
 				throw new Error("could not make dir "+rootdir);
 			try{
@@ -100,7 +100,7 @@ final public class htp{
 			}catch(IOException e){
 				throw new Error(e);
 			}
-//		}
+		}
 		final ServerSocketChannel serverSocketChannel=ServerSocketChannel.open();
 		serverSocketChannel.configureBlocking(false);
 		final InetSocketAddress inetSocketAddress=new InetSocketAddress(Integer.parseInt(server_port));
@@ -289,12 +289,6 @@ final public class htp{
 	public static String tostr(final Serializable object,final String def){return object==null?def:object.toString();}
 	public static byte[]tobytes(final String v){try{return v.getBytes(strenc);}catch(UnsupportedEncodingException e){throw new Error(e);}}
 	public static String sessionhref(final String sessionid){return sessions_dir+"/"+sessionid+"/";}
-//	public static Font fontget(final String name,final float size) throws FileNotFoundException, FontFormatException, IOException{
-//		//? cache
-//		Font font=Font.createFont(Font.TRUETYPE_FONT,htp.path("ttf/"+name+".ttf").getInputStream());
-//		font=font.deriveFont(size);
-//		return font;
-//	}
 	public static boolean isempty(final String s){return s==null||s.length()==0;}
 	public static path path(final Class<?>cls){return path("/"+cls.getName().replace('.','/'));}
 	public static void write(final wt w)throws Throwable{
