@@ -81,7 +81,7 @@ final public class htp{
 		final File rootdir=new File(root_dir);
 		if(!rootdir.exists()){
 			if(!rootdir.mkdirs())
-				throw new Error("could not create dir "+rootdir);
+				throw new Error("could not make dir "+rootdir);
 		    try {
 		   	 final ZipInputStream zis=new ZipInputStream(htp.class.getResourceAsStream("/htprc/files.zip"));
 		   	 for(ZipEntry ze=zis.getNextEntry();ze!=null;ze=zis.getNextEntry()){
@@ -89,7 +89,9 @@ final public class htp{
 		   			 new File(rootdir,ze.getName()).mkdirs();
 		           continue;
 		         }
-		         htp.cp(zis,new BufferedOutputStream(new FileOutputStream(new File(rootdir,ze.getName()))));
+		   		final BufferedOutputStream bos=new BufferedOutputStream(new FileOutputStream(new File(rootdir,ze.getName())));
+		         htp.cp(zis,bos);
+		         bos.close();
 		         zis.closeEntry();
 		   	 }
 		       zis.close();
