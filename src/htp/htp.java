@@ -90,7 +90,8 @@ final public class htp{
 		           continue;
 		         }
 		         htp.cp(zis,new BufferedOutputStream(new FileOutputStream(new File(rootdir,ze.getName()))));
-		       }
+		         zis.closeEntry();
+		   	 }
 		       zis.close();
 		     }catch(IOException e){
 		   	  throw new Error(e);
