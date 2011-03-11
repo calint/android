@@ -86,7 +86,7 @@ final public class htp{
 		   	 final ZipInputStream zis=new ZipInputStream(htp.class.getResourceAsStream("/htprc/files.zip"));
 		   	 for(ZipEntry ze=zis.getNextEntry();ze!=null;ze=zis.getNextEntry()){
 		   		 if(ze.isDirectory()) {
-		   			 (new File(rootdir,ze.getName())).mkdirs();
+		   			 new File(rootdir,ze.getName()).mkdirs();
 		           continue;
 		         }
 		         htp.cp(zis,new BufferedOutputStream(new FileOutputStream(new File(rootdir,ze.getName()))));
