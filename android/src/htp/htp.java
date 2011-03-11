@@ -1,5 +1,7 @@
 package htp;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -25,6 +27,8 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.TimeZone;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 final public class htp{
 	public final static String strenc="utf-8";
 	public final static String q=" ڀ ";
@@ -73,6 +77,24 @@ final public class htp{
 			}
 			if(args.length>0)
 				server_port=args[0];
+		}
+		final File rootdir=new File(root_dir);
+		if(!rootdir.exists()){
+			if(!rootdir.mkdirs())
+				throw new Error("could not create dir "+rootdir);
+		    try {
+		   	 final ZipInputStream zis=new ZipInputStream(htp.class.getResourceAsStream("/htprc/files.zip"));
+		   	 for(ZipEntry ze=zis.getNextEntry();ze!=null;ze=zis.getNextEntry()){
+		   		 if(ze.isDirectory()) {
+		   			 (new File(rootdir,ze.getName())).mkdirs();
+		           continue;
+		         }
+		         htp.cp(zis,new BufferedOutputStream(new FileOutputStream(new File(rootdir,ze.getName()))));
+		       }
+		       zis.close();
+		     }catch(IOException e){
+		   	  throw new Error(e);
+		     }
 		}
 		final ServerSocketChannel serverSocketChannel=ServerSocketChannel.open();
 		serverSocketChannel.configureBlocking(false);
