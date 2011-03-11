@@ -38,6 +38,7 @@ final public class htp{
 	public static String server_port="8082";
 	public static boolean try_file=true;
 	public static boolean cache_files=true;
+	public static boolean thd_watch=true;
 	public static int cache_files_hashlen=K;
 	public static int cache_files_maxsize=64*K;
 	public static long cache_files_validate_dt=1000;
@@ -79,7 +80,8 @@ final public class htp{
 		serverSocket.bind(inetSocketAddress);
 		req.init_static();
 		session.all_load();
-		new thdwatch().start();
+		if(thd_watch)
+			new thdwatch().start();
 		final Selector selector=Selector.open();
 		serverSocketChannel.register(selector,SelectionKey.OP_ACCEPT);
 		Runtime.getRuntime().addShutdownHook(new jvmshutdownhook());
