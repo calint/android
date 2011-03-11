@@ -6,9 +6,10 @@ import java.util.Random;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.view.KeyEvent;
-import c.a.activity;
+import c.a.state;
+import c.a.cluket;
 
-public class tapit implements activity.cluket{
+public class tapit implements cluket{
 	private static final long serialVersionUID=1L;
 	public static float r=20.0f;
 	public static float tgt_r_min=5;
@@ -22,7 +23,7 @@ public class tapit implements activity.cluket{
 	private Random random=new Random(0);
 	private long target_t_ms;
 
-	public void paint(final activity.state state,final Canvas canvas){
+	public void paint(final state state,final Canvas canvas){
 		canvas.drawRGB(0,0,0);
 
 		for(dot t:targets)
@@ -37,7 +38,7 @@ public class tapit implements activity.cluket{
 		canvas.drawCircle(state.touch_x,state.touch_y,r,paint);
 	}
 	
-	public void update(final activity.state state){
+	public void update(final state state){
 		if((state.keys[KeyEvent.KEYCODE_A]&1)!=0){
 			dot.anti_alias=!dot.anti_alias;
 			if((state.keys[KeyEvent.KEYCODE_A]&2)!=0){
