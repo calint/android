@@ -1,4 +1,5 @@
 package wt.ix;
+import htp.htp;
 import htp.path;
 import htp.req;
 import htp.session;
@@ -64,7 +65,7 @@ public class q extends wt{
 				iconName="";
 			x.tr().td("icns first").p(iconName).td("name");
 			if(p.isFile())
-				x.aBgn(p.getHref()).p(p.getName()).aEnd();
+				x.aBgn(p.getHref().substring(htp.root_dir.length())).p(p.getName()).aEnd();
 			else
 				x.p(p.toString());
 			x.tdEnd();

@@ -39,6 +39,7 @@ final public class htp{
 	public static boolean try_file=true;
 	public static boolean cache_files=true;
 	public static boolean thd_watch=true;
+	public static int threads_min=4;
 	public static int cache_files_hashlen=K;
 	public static int cache_files_maxsize=64*K;
 	public static long cache_files_validate_dt=1000;
@@ -132,7 +133,7 @@ final public class htp{
 						}
 						if(r.is_waiting_run_page()||r.is_waiting_run_page_content()){
 							synchronized(pending_req){
-								if(thdwatch.freethds<4)
+								if(thdwatch.freethds<threads_min)
 									new thdreq(r);
 								else{
 									pending_req.addLast(r);

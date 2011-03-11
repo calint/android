@@ -639,6 +639,11 @@ public final class req{
 				return true;
 		if(!pth.exists())
 			return false;
+		if(!pth.isFile()){
+			pth=pth.getPath(htp.default_directory_file);
+			if(!pth.exists()||!pth.isFile())
+				return false;
+		}
 		thdwatch.files++;
 		final long lastmod_l=pth.getLastModified();
 		final String lastmod_s=htp.toLastModified(lastmod_l);

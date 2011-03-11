@@ -1,8 +1,6 @@
 package c.a;
-
 import java.io.Serializable;
 import android.view.KeyEvent;
-
 final public class state implements Serializable{
 	private static final long serialVersionUID=1L;
 	public transient device device;
