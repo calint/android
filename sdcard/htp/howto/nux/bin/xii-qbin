@@ -1,2 +1,0 @@
-#!/bin/sh
-exec ~/sdk/workspace/htp/howto/qmenu/qmenu&
