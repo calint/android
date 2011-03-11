@@ -9,30 +9,26 @@ import android.view.KeyEvent;
 import c.a.state;
 import c.a.cluket;
 
-public class tapit implements cluket{
+public final class tapit implements cluket{
 	private static final long serialVersionUID=1L;
 	public static float r=20.0f;
 	public static float tgt_r_min=5;
 	public static float tgt_r_max=20;
 	public static long newtargetevery_ms_def=1000;
 	public static long newtargetevery_ms=newtargetevery_ms_def;
-
 	private LinkedList<dot> targets=new LinkedList<dot>();
 	private int score;
 	private int targetsleft;
 	private Random random=new Random(0);
 	private long target_t_ms;
-
 	public void paint(final state state,final Canvas canvas){
 		canvas.drawRGB(0,0,0);
-
-		for(dot t:targets)
+		for(final dot t:targets)
 			t.paint(canvas);
 
 		final Paint paint=new Paint();
 		paint.setColor(0xffffffff);
 		canvas.drawText("score: "+score+"  tapits: "+targetsleft+"  rate: "+newtargetevery_ms+"  ªłþħª="+dot.alpha,0,state.scr_h-10,paint);
-
 		paint.setColor(0xff000000);
 		paint.setAntiAlias(true);
 		canvas.drawCircle(state.touch_x,state.touch_y,r,paint);
@@ -65,11 +61,11 @@ public class tapit implements cluket{
 			targetsleft++;
 		}
 
-		for(Iterator<dot> i=targets.iterator();i.hasNext();){
-			dot t=i.next();
-			float dx=t.x-state.touch_x;
-			float dy=t.y-state.touch_y;
-			float dist2=dx*dx+dy*dy;
+		for(final Iterator<dot> i=targets.iterator();i.hasNext();){
+			final dot t=i.next();
+			final float dx=t.x-state.touch_x;
+			final float dy=t.y-state.touch_y;
+			final float dist2=dx*dx+dy*dy;
 			if(dist2>(t.r*t.r)){
 				continue;
 			}
@@ -82,7 +78,7 @@ public class tapit implements cluket{
 		if(newtargetevery_ms<0)
 			newtargetevery_ms=newtargetevery_ms_def;
 	}
-	private float rnd(float min,float maxexl){
+	private float rnd(final float min,final float maxexl){
 		return random.nextFloat()*(maxexl-min)+min;
 	}
 }

@@ -26,7 +26,11 @@ final public class activity extends Activity implements Runnable,SurfaceHolder.C
 	private boolean on;
 	private SurfaceView surface;
 	public activity(){
-		try{state.cluket=(cluket)Class.forName(cluketName).newInstance();}catch(Throwable t){throw new Error(t);}
+		try{
+			state.cluket=(cluket)Class.forName(cluketName).newInstance();
+		}catch(Throwable t){
+			throw new Error(t);
+		}
 	}
 	private void thread_start(){
 		thread=new Thread(this,cluketName);
@@ -122,7 +126,7 @@ final public class activity extends Activity implements Runnable,SurfaceHolder.C
 			state.t+=dt;
 			final long t_sleep=state.dt_ms-dt;
 			status.setLength(0);
-			status.append("frameno=").append(state.frameno).append("  fpswish=").append(fmt.format(1.0f/state.dt)).append("  fps=").append(fmt.format(fps)).append("  sleep=").append(t_sleep);
+			status.append("frame#=").append(state.frameno).append("  fpswish=").append(fmt.format(1.0f/state.dt)).append("  fps=").append(fmt.format(fps)).append("  sleep=").append(t_sleep);
 			canvas.drawText(status.toString(),0,10,paint);
 			surface.getHolder().unlockCanvasAndPost(canvas);
 			if(t_sleep>0)
