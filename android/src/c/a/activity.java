@@ -8,6 +8,7 @@ import java.text.NumberFormat;
 import android.app.Activity;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Typeface;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
@@ -184,5 +185,9 @@ final public class activity extends Activity implements Runnable,SurfaceHolder.C
 			return;
 		if(dbg_level>=level)
 			Log.i("dbg",line);
+	}
+	@Override public Typeface getTypeface(String pth){
+		//? cache
+		return Typeface.createFromAsset(getAssets(),"ttf/"+pth+".ttf");
 	}
 }
