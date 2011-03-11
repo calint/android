@@ -1,0 +1,2 @@
+#!/bin/sh
+exec nautilus --no-desktop&

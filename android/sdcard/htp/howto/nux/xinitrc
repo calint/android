@@ -1,0 +1,16 @@
+#REL=Release
+REL=Debug
+export SDK=$HOME/sdk
+export WORKSPACE=$SDK/workspace
+export NUX=$WORKSPACE/htp/howto/nux
+export PATH=$NUX/bin:$PATH
+export IDE=$SDK/eclipse/eclipse
+export CLONKY=$WORKSPACE/htp/howto/clonky/clonky
+export FRAMELESS=$WORKSPACE/htp/howto/frameless/frameless
+export WIFI=nm-applet
+source $HOME/.alias
+xsetroot -bitmap $NUX/sq.bmp
+xmodmap -e "clear Lock"
+$CLONKY&
+$WIFI&
+exec $FRAMELESS
