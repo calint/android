@@ -9,7 +9,7 @@ final public class state implements Serializable{
 	public cluket cluket;
 	public final byte[] keys=new byte[KeyEvent.MAX_KEYCODE];
 	public long frameno;
-	public long dt_ms=1000/10;
+	public long dt_ms=1000;
 	public float dt=0.001f*dt_ms;
 	public float touch_x;
 	public float touch_y;

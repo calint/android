@@ -1,7 +1,9 @@
 package htp;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Field;
-final class thdwatch extends Thread{
+final public class thdwatch extends Thread{
 	public static long ms;
 	public static long mem;
 	public static long input;
@@ -27,10 +29,10 @@ final class thdwatch extends Thread{
 	public static PrintStream _out=System.out;
 	private long _t;
 	static boolean _stop;
+	final static Field[] _fields=thdwatch.class.getDeclaredFields();
 	public thdwatch(){super("watch");}
+	final static String _pad="       ";
 	@Override public void run(){
-		final Field[] fields=getClass().getDeclaredFields();
-		final String pad="       ";
 		while(!_stop)
 			try{
 				ms=System.currentTimeMillis()-_t0;
@@ -39,40 +41,46 @@ final class thdwatch extends Thread{
 					_out.println("\n\n");
 					htp.stats_to(_out);
 					_out.println();
-					for(int n=0;n<fields.length;n++){
-						Field field=fields[n];
-						String s=field.getName();
-						if(s.startsWith("_"))
-							continue;
-						if(s.length()>pad.length())
-							s=s.substring(0,pad.length());
-						_out.print(pad.substring(0,pad.length()-s.length()));
-						_out.print(s);
-						_out.print(" ");
-					}
-					_out.println();
+					print_fieldnames_to(_out,"\n");
 				}
 				_threads=thdreq.all.size();
 				Runtime rt=Runtime.getRuntime();
 				_memfree=rt.freeMemory();
 				mem=rt.totalMemory()-_memfree;
 				que=htp.pending_req().size();
-				for(int n=0;n<fields.length;n++){
-					Field field=fields[n];
-					String s=field.getName();
-					if(s.startsWith("_"))
-						continue;
-					s=field.get(this).toString();
-					if(s.length()>pad.length())
-						s=s.substring(0,pad.length());
-					_out.print(pad.substring(0,pad.length()-s.length()));
-					_out.print(s);
-					_out.print(" ");
-				}
-				_out.print('\r');
+				print_fields_to(_out,"\r");
 				sleep(_prevry);
 			}catch(Throwable t){
 				t.printStackTrace();
 			}
+	}
+	public static void print_fieldnames_to(final OutputStream os,final String eol) throws IOException{
+		for(int n=0;n<_fields.length;n++){
+			Field field=_fields[n];
+			String s=field.getName();
+			if(s.startsWith("_"))
+				continue;
+			if(s.length()>_pad.length())
+				s=s.substring(0,_pad.length());
+			os.write(_pad.substring(0,_pad.length()-s.length()).getBytes());
+			os.write(s.getBytes());
+			os.write(" ".getBytes());
+		}
+		os.write(eol.getBytes());
+	}
+	public static void print_fields_to(final OutputStream os,final String eol) throws IllegalAccessException, IOException{
+		for(int n=0;n<_fields.length;n++){
+			Field field=_fields[n];
+			String s=field.getName();
+			if(s.startsWith("_"))
+				continue;
+			s=field.get(null).toString();
+			if(s.length()>_pad.length())
+				s=s.substring(0,_pad.length());
+			os.write(_pad.substring(0,_pad.length()-s.length()).getBytes());
+			os.write(s.getBytes());
+			os.write(" ".getBytes());
+		}
+		os.write(eol.getBytes());
 	}
 }
