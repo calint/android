@@ -1,0 +1,2 @@
+# sonyericsson xperia pro
+SUBSYSTEM=="usb", SYSFS{idVendor}=="0fce", MODE="0666"
