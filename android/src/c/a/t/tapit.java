@@ -1,14 +1,11 @@
 package c.a.t;
-
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Random;
-import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.view.KeyEvent;
-import c.a.state;
 import c.a.cluket;
-
+import c.a.dc;
+import c.a.state;
 public final class tapit implements cluket{
 	private static final long serialVersionUID=1L;
 	public static float r=20.0f;
@@ -21,17 +18,14 @@ public final class tapit implements cluket{
 	private int targetsleft;
 	private Random random=new Random(0);
 	private long target_t_ms;
-	public void paint(final state state,final Canvas canvas){
-		canvas.drawRGB(0,0,0);
+	public void paint(final state state,final dc dc){
+		dc.clr(0,0,0);
 		for(final dot t:targets)
-			t.paint(canvas);
-
-		final Paint paint=new Paint();
-		paint.setColor(0xffffffff);
-		canvas.drawText("score: "+score+"  tapits: "+targetsleft+"  rate: "+newtargetevery_ms+"  ªłþħª="+dot.alpha,0,state.scr_h-10,paint);
-		paint.setColor(0xff000000);
-		paint.setAntiAlias(true);
-		canvas.drawCircle(state.touch_x,state.touch_y,r,paint);
+			t.paint(dc);
+		dc.brush(0xffffffff,true);
+		dc.drwtxt(0,state.scr_h-10,"score: "+score+"  tapits: "+targetsleft+"  rate: "+newtargetevery_ms+"  targets: "+targets.size());
+		dc.brush(0xff000000,true);
+		dc.drwcrcl(state.touch_x,state.touch_y,r);
 	}
 	
 	public void update(final state state){
@@ -53,7 +47,10 @@ public final class tapit implements cluket{
 				state.keys[KeyEvent.KEYCODE_DPAD_LEFT]=0;				
 			}
 		}
-		
+		if((state.keys[KeyEvent.KEYCODE_SPACE]&2)!=0){
+			targets.clear();
+			state.keys[KeyEvent.KEYCODE_SPACE]=0;
+		}
 		target_t_ms+=state.dt_ms;
 		if(target_t_ms>newtargetevery_ms){
 			target_t_ms=0;
