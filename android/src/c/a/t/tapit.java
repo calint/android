@@ -25,7 +25,7 @@ public final class tapit implements cluket{
 			t.paint(dc);
 		dc.brush(0xffffffff,true);
 		final state state=dev.state();
-		dc.drwtxt(0,state.scr_h-10,"score: "+score+"  tapits: "+targetsleft+"  rate: "+newtargetevery_ms+"  targets: "+targets.size());
+		dc.drwtxt(0,state.scr_h-10,"hits: "+score+"  tapits: "+targetsleft);
 		dc.brush(0xff000000,true);
 		dc.drwcrcl(state.touch_x,state.touch_y,r);
 	}

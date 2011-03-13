@@ -16,10 +16,9 @@ public class a implements cluket,Runnable{
 			bgcluket.paint(dev,dc);
 		else
 			dc.clr(0,0,0);
-		dc.brush(0xffffffff,true).textSize(7.0f).pos(0,17).dy(12);
+		dc.brush(0xffffffff,true).textSize(7.0f).pos(0,23).dy(12);
 		dc.pl("http://"+dev.get_host_ip_address()+("80".equals(htp.server_port)?"":(":"+htp.server_port))+" @ "+new File(htp.root_dir).getAbsolutePath());
 		dc.pl("(input,output)=B("+thdwatch.input+","+thdwatch.output+")");
-		dc.pl("");
 		if(dev.state().menu){
 			thdwatch.print_fields2_to(new osnewliner(){public void on_newline(String line) throws Throwable{
 				dc.pl(line);

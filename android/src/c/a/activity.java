@@ -82,7 +82,7 @@ final public class activity extends Activity implements Runnable,SurfaceHolder.C
 			state.frameno++;
 			final dc d=new dc(canvas);
 			try{state.cluket.paint(this,d);}catch(Throwable e){throw new Error(e);}
-			float x=0f,y=12f;
+			float x=0f,y=0f;
 			for(final byte b:state.keys){
 				if((b&1)!=0){
 					canvas.drawPoint(x,y,paint_keydown);
@@ -104,7 +104,7 @@ final public class activity extends Activity implements Runnable,SurfaceHolder.C
 			final long t_sleep=state.dt_ms-dt;
 			status.setLength(0);
 			status.append("frame#=").append(state.frameno).append("  fpswish=").append(fmt.format(1.0f/state.dt)).append("  fps=").append(fmt.format(fps)).append("  sleep=").append(t_sleep);
-			canvas.drawText(status.toString(),0,10,paint);
+			canvas.drawText(status.toString(),0,11,paint);
 			surface.getHolder().unlockCanvasAndPost(canvas);
 			if(t_sleep>0)
 				try{Thread.sleep(t_sleep);}catch(InterruptedException ignored){}
