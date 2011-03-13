@@ -43,9 +43,10 @@ public class a implements cluket,Runnable{
 		try{
 			htp.server_port="8888";
 			htp.root_dir="/sdcard/htp/";
-			htp.cache_files=false;
+			htp.cache_files=true;
+			htp.cache_uris=true;
 			htp.thd_watch=false;
-			htp.threads_min=1;
+			htp.threads_max=4;
 			htp.main(new String[]{});
 		}catch(Throwable e){
 			throw new Error(e);

@@ -160,7 +160,7 @@ public final class path implements Serializable{
 //	public void setExecutable(final boolean b){file.setExecutable(b);}
 	public boolean isHidden(){return file.getName().charAt(0)=='.';}
 	public String getHref(){
-		String s=file.getPath();
+		String s=file.getPath().substring(htp.root_dir.length());
 		if(s.startsWith("./"))
 			s=s.substring(2);
 		String[] parts=s.split("/");

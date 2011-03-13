@@ -42,9 +42,10 @@ final public class htp{
 	public static String root_dir=".";
 	public static String server_port="8082";
 	public static boolean try_file=true;
-	public static boolean cache_files=true;
 	public static boolean thd_watch=true;
-	public static int threads_min=4;
+	public static int threads_max=1024;
+	public static boolean cache_uris=true;
+	public static boolean cache_files=true;
 	public static int cache_files_hashlen=K;
 	public static int cache_files_maxsize=64*K;
 	public static long cache_files_validate_dt=1000;
@@ -157,7 +158,7 @@ final public class htp{
 						}
 						if(r.is_waiting_run_page()||r.is_waiting_run_page_content()){
 							synchronized(pending_req){
-								if(thdwatch.freethds<threads_min)
+								if(thdwatch.threads<threads_max)
 									new thdreq(r);
 								else{
 									pending_req.addLast(r);
@@ -247,20 +248,23 @@ final public class htp{
 		ps.println(hello);
 		ps.println("             time: "+toLastModified(System.currentTimeMillis()));
 		ps.println("             port: "+server_port);
-		ps.println("          threads: "+thdreq.all.size());
+		ps.println("          threads: "+thdwatch.threads);
+		ps.println("     free threads: "+thdwatch.freethds);
+		ps.println("            input: "+(thdwatch.input>>10)+" KB");
+		ps.println("           output: "+(thdwatch.output>>10)+" KB");
 		ps.println("        downloads: "+new File(root_dir).getCanonicalPath());
 		ps.println("     sessions dir: "+new File(root_dir,sessions_dir).getCanonicalPath());
 		ps.println("   sessions store: "+new File(root_dir,sessions_store).getCanonicalPath());
 		ps.println("         sessions: "+session.all().size());
-		Runtime rt=Runtime.getRuntime();
-		if(gc_before_stats)
-			rt.gc();
-		long m1=rt.totalMemory();
-		long m2=rt.freeMemory();
-		ps.println("         ram used: "+((m1-m2)>>10)+" KB");
-		ps.println("         ram free: "+(m2>>10)+" KB");
 		ps.println("     cached files: "+(req.cachef_size()>>10)+" KB");
 		ps.println("      cached uris: "+(req.cacheu_size()>>10)+" KB");
+		final Runtime rt=Runtime.getRuntime();
+		if(gc_before_stats)
+			rt.gc();
+		final long m1=rt.totalMemory();
+		final long m2=rt.freeMemory();
+		ps.println("         ram used: "+((m1-m2)>>10)+" KB");
+		ps.println("         ram free: "+(m2>>10)+" KB");
 	}
 	public static int rndint(final int from,final int tonotincl){return (int)(Math.random()*(tonotincl-from));}
 	public static String stackTrace(final Throwable e){

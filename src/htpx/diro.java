@@ -46,9 +46,8 @@ public class diro extends wt{
 			if((bits&BIT_ALLOW_NAV_UP)!=0){
 				x.aBgn("javascript:ui.ax('"+wid+" up')").p("«").aEnd();
 			}
-			x.p(pathdisp);
 			x.thEnd();
-			x.th().thEnd();
+			x.th().p(pathdisp).thEnd();
 			x.th().thEnd();
 			x.th().thEnd();
 			x.trEnd().nl();
