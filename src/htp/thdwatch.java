@@ -9,7 +9,6 @@ final public class thdwatch extends Thread{
 	public static long mem;
 	public static long input;
 	public static long output;
-	public static int threads;
 	public static long freethds;
 	public static long que;
 	public static long sessions;
