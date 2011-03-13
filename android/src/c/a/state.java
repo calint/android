@@ -13,4 +13,5 @@ final public class state implements Serializable{
 	public long t;
 	public int scr_w;
 	public int scr_h;
+	public boolean menu;
 }
