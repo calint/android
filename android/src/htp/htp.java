@@ -39,32 +39,32 @@ final public class htp{
 	public final static long T=K*G;
 	public final static long P=K*T;
 	public final static String rc_files_zip="/htprc/files.zip";
+	public static String hello="public domain server #1";
+	public static String id="aaaa";
 	public static String root_dir=".";
 	public static String server_port="8082";
 	public static boolean try_file=true;
 	public static boolean thd_watch=true;
-	public static int threads_max=1024;
+	public static boolean thread_pool=true;
+	public static int thread_pool_size=8;
+	public static long thread_pool_lftm=60*1000;
 	public static boolean cache_uris=true;
 	public static boolean cache_files=true;
 	public static int cache_files_hashlen=K;
 	public static int cache_files_maxsize=64*K;
 	public static long cache_files_validate_dt=1000;
 	public static int transfer_file_write_size=64*K;
+	public static int io_buf_B=64*K;
 	public static int chunk_B=4*K;
 	public static String default_directory_file="index.html";
 	public static String default_package_class="£";
 	public static boolean gc_before_stats=false;
 	public static int hash_size_session_values=32;
 	public static int hash_size_sessions_store=4*K;
-	public static String hello="public domain server #1";
-	public static String id="aaaa";
-	public static int io_buf_B=64*K;
 	public static String sessionfile="sessionfile";
-	public static boolean sessionfile_load=true;
+	public static boolean sessionfile_load=false;
 	public static String sessions_dir="u";
 	public static String sessions_store="s";
-	public static long thread_lftm=60*1000;
-	public static boolean cacheu=true;
 	public static boolean cacheu_tofile=true;
 	public static String cacheu_dir="/cache/";
 	public static final String web_widgets_package="wt.";
@@ -152,24 +152,24 @@ final public class htp{
 							}
 							if(r.is_buf_empty()){
 								selectionKey.interestOps(SelectionKey.OP_READ);
-							}else
-								proc(selectionKey,r);
+								continue;
+							}
+							proc(selectionKey,r);
 							continue;
 						}
 						if(r.is_waiting_run_page()||r.is_waiting_run_page_content()){
+							if(!htp.thread_pool||thdreq.all.size()<thread_pool_size){
+								new thdreq(r);
+								continue;
+							}
 							synchronized(pending_req){
-								if(thdwatch.threads<threads_max)
-									new thdreq(r);
-								else{
-									pending_req.addLast(r);
-									pending_req.notify();
-								}
+								pending_req.addLast(r);
+								pending_req.notify();
 							}
 						}
 					}
 				}
 			}catch(Throwable e){
-//				e.printStackTrace();
 				log(e);
 			}
 		}
@@ -248,7 +248,7 @@ final public class htp{
 		ps.println(hello);
 		ps.println("             time: "+toLastModified(System.currentTimeMillis()));
 		ps.println("             port: "+server_port);
-		ps.println("          threads: "+thdwatch.threads);
+		ps.println("          threads: "+thdreq.all.size());
 		ps.println("     free threads: "+thdwatch.freethds);
 		ps.println("            input: "+(thdwatch.input>>10)+" KB");
 		ps.println("           output: "+(thdwatch.output>>10)+" KB");

@@ -1,9 +1,8 @@
 package htp;
 import java.nio.channels.SelectionKey;
-import java.util.ArrayList;
 import java.util.LinkedList;
 final class thdreq extends Thread{
-	static ArrayList<thdreq>all=new ArrayList<thdreq>(htp.K);
+	static LinkedList<thdreq>all=new LinkedList<thdreq>();
 	private static int seq;
 	req r;
 	long t0;
@@ -11,15 +10,12 @@ final class thdreq extends Thread{
 		super("t"+Integer.toString(seq++));
 		this.r=r;
 		synchronized(all){all.add(this);}
-		t0=System.currentTimeMillis();
 		start();
 	}
 	@Override public void run(){
-		thdwatch.threads++;
-		if(r!=null)
-			proc();			
-		r=null;
-		while(true){
+		t0=System.currentTimeMillis();
+		proc();
+		while(htp.thread_pool){
 			final LinkedList<req>pr=htp.pending_req();
 			synchronized(pr){
 				thdwatch.freethds++;
@@ -30,11 +26,11 @@ final class thdreq extends Thread{
 				thdwatch.freethds--;
 			}
 			proc();
-			long dt=System.currentTimeMillis()-t0;
-			if(dt>htp.thread_lftm)
+			final long dt=System.currentTimeMillis()-t0;
+			if(dt>htp.thread_pool_lftm)
 				break;
 		}
-		thdwatch.threads--;
+		synchronized(all){all.remove(this);}
 	}
 	private void proc(){
 		try{
