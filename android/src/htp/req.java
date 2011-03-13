@@ -532,31 +532,33 @@ public final class req{
 			}
 			return;
 		}
-		if(w instanceof cacheable){
-			final cacheable cw=(cacheable)w;
-			final String ifmodsince=hdrs.get(hk_if_modified_since);
-			final String lastmod=cw.lastMod();
-			if(ifmodsince!=null&&ifmodsince.equals(lastmod)){
-				reply(h_http304,null,null,null);
+		if(htp.cache_uris){
+			if(w instanceof cacheable){
+				final cacheable cw=(cacheable)w;
+				final String ifmodsince=hdrs.get(hk_if_modified_since);
+				final String lastmod=cw.lastMod();
+				if(ifmodsince!=null&&ifmodsince.equals(lastmod)){
+					reply(h_http304,null,null,null);
+					return;
+				}
+				final long t=System.currentTimeMillis();
+				String key=sb_uri.toString();
+				if(cw.cacheforeachuser())
+					key=req.get().session().id()+"~"+key;
+				cachedresp c;
+				synchronized(cacheu){c=cacheu.get(key);}
+				if(c==null){
+					c=new cachedresp(cw,key);
+					synchronized(cacheu){cacheu.put(key,c);}
+				}
+				c.validate_cacheable(t,ifmodsince);
+		//		reply(c.byteBuffer());
+				//? transferfile
+				final oschunked os=reply_chunked(h_http200,c.contentType(),c.lastModified());
+				os.write(c.byteBuffer().array());
+				os.finish();
 				return;
 			}
-			final long t=System.currentTimeMillis();
-			String key=sb_uri.toString();
-			if(cw.cacheforeachuser())
-				key=req.get().session().id()+"~"+key;
-			cachedresp c;
-			synchronized(cacheu){c=cacheu.get(key);}
-			if(c==null){
-				c=new cachedresp(cw,key);
-				synchronized(cacheu){cacheu.put(key,c);}
-			}
-			c.validate_cacheable(t,ifmodsince);
-	//		reply(c.byteBuffer());
-			//? transferfile
-			final oschunked os=reply_chunked(h_http200,c.contentType(),c.lastModified());
-			os.write(c.byteBuffer().array());
-			os.finish();
-			return;
 		}
 		final oschunked os=reply_chunked(h_http200,text_html_utf8,null);
 		final boolean stream=w instanceof stream;

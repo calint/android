@@ -15,6 +15,7 @@ final class thdreq extends Thread{
 		start();
 	}
 	@Override public void run(){
+		thdwatch.threads++;
 		if(r!=null)
 			proc();			
 		r=null;
@@ -33,6 +34,7 @@ final class thdreq extends Thread{
 			if(dt>htp.thread_lftm)
 				break;
 		}
+		thdwatch.threads--;
 	}
 	private void proc(){
 		try{
