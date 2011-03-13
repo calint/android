@@ -81,7 +81,7 @@ final public class activity extends Activity implements Runnable,SurfaceHolder.C
 			fps_c++;
 			state.frameno++;
 			final dc d=new dc(canvas);
-			try{state.cluket.paint(state,d);}catch(Throwable e){throw new Error(e);}
+			try{state.cluket.paint(this,d);}catch(Throwable e){throw new Error(e);}
 			float x=0f,y=12f;
 			for(final byte b:state.keys){
 				if((b&1)!=0){
@@ -91,7 +91,7 @@ final public class activity extends Activity implements Runnable,SurfaceHolder.C
 				}
 				x+=2.0f;
 			}
-			try{state.cluket.update(state);}catch(Throwable e){throw new Error(e);}
+			try{state.cluket.update(this);}catch(Throwable e){throw new Error(e);}
 			final long t1=System.currentTimeMillis();
 			final long fps_dt=t1-fps_t0;
 			if(fps_dt>1000){
@@ -123,9 +123,10 @@ final public class activity extends Activity implements Runnable,SurfaceHolder.C
 		if(event.getRepeatCount()!=0)
 			return true;
 		final int keyCode=event.getKeyCode();
-		if(keyCode==KeyEvent.KEYCODE_MENU)
-			return super.dispatchKeyEvent(event);
-
+		if(keyCode==KeyEvent.KEYCODE_MENU){
+			state.menu=!state.menu;
+			return true;
+		}
 		final int action=event.getAction();
 		if(action==KeyEvent.ACTION_DOWN){
 			state.keys[keyCode]|=1;
@@ -156,4 +157,5 @@ final public class activity extends Activity implements Runnable,SurfaceHolder.C
 		final String ip=String.format("%d.%d.%d.%d",(ipAddress&0xff),(ipAddress>>8&0xff),(ipAddress>>16&0xff),(ipAddress>>24&0xff));
 		return ip;
 	}
+	@Override public state state(){return state;}
 }

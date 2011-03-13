@@ -1,4 +1,5 @@
 package htp;
+import htpx.osnewliner;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -82,5 +83,22 @@ final public class thdwatch extends Thread{
 			os.write(" ".getBytes());
 		}
 		os.write(eol.getBytes());
+	}
+	public static void print_fields2_to(final osnewliner os,final byte[]ba_eol,final byte[]ba_eor,final String pad) throws IOException, IllegalArgumentException, IllegalAccessException{
+		for(int n=0;n<_fields.length;n++){
+			Field field=_fields[n];
+			String s=field.getName();
+			if(s.startsWith("_"))
+				continue;
+			if(s.length()>pad.length())
+				s=s.substring(0,pad.length());
+			os.write(pad.substring(0,pad.length()-s.length()).getBytes());
+			os.write(s.getBytes());
+			os.write(": ".getBytes());
+			s=field.get(null).toString();
+			os.write(s.getBytes());
+			os.write(ba_eol);
+		}
+		os.write(ba_eor);		
 	}
 }

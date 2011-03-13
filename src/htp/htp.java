@@ -38,6 +38,7 @@ final public class htp{
 	public final static long G=K*M;
 	public final static long T=K*G;
 	public final static long P=K*T;
+	public final static String rc_files_zip="/htprc/files.zip";
 	public static String root_dir=".";
 	public static String server_port="8082";
 	public static boolean try_file=true;
@@ -80,26 +81,22 @@ final public class htp{
 		}
 		final File rootdir=new File(root_dir);
 		if(!rootdir.exists()){
-			if(!rootdir.exists()&&!rootdir.mkdirs())
+			if(!rootdir.mkdirs())
 				throw new Error("could not make dir "+rootdir);
-			try{
-				final ZipInputStream zis=new ZipInputStream(htp.class.getResourceAsStream("/htprc/files.zip"));
-				for(ZipEntry ze=zis.getNextEntry();ze!=null;ze=zis.getNextEntry()){
-					if(ze.isDirectory()) {
-						new File(rootdir,ze.getName()).mkdirs();
-						continue;
-					}
-					final File file=new File(rootdir,ze.getName());
-					final BufferedOutputStream bos=new BufferedOutputStream(new FileOutputStream(file));
-					htp.cp(zis,bos);
-					bos.flush();
-					bos.close();
-					zis.closeEntry();
+			final ZipInputStream zis=new ZipInputStream(htp.class.getResourceAsStream(rc_files_zip));
+			for(ZipEntry ze=zis.getNextEntry();ze!=null;ze=zis.getNextEntry()){
+				if(ze.isDirectory()) {
+					new File(rootdir,ze.getName()).mkdirs();
+					continue;
 				}
-				zis.close();
-			}catch(IOException e){
-				throw new Error(e);
+				final File file=new File(rootdir,ze.getName());
+				final BufferedOutputStream bos=new BufferedOutputStream(new FileOutputStream(file));
+				htp.cp(zis,bos);
+				bos.flush();
+				bos.close();
+				zis.closeEntry();
 			}
+			zis.close();
 		}
 		final ServerSocketChannel serverSocketChannel=ServerSocketChannel.open();
 		serverSocketChannel.configureBlocking(false);

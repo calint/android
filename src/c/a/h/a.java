@@ -5,40 +5,40 @@ import htpx.osnewliner;
 import java.io.File;
 import c.a.cluket;
 import c.a.dc;
-import c.a.state;
+import c.a.device;
 public class a implements cluket,Runnable{
 	static final long serialVersionUID=1;
 	private boolean started;
 	private cluket bgcluket=new c.a.t.tapit();
 	private boolean bgcluketon=true;
-	public void paint(final state state,final dc dc) throws Throwable{
+	public void paint(final device dev,final dc dc) throws Throwable{
 		if(bgcluketon)
-			bgcluket.paint(state,dc);
+			bgcluket.paint(dev,dc);
 		else
 			dc.clr(0,0,0);
-		dc.brush(0xffffffff,true).textSize(7.0f).pos(0,33).dy(12);
-		dc.pl("http://"+state.device.get_host_ip_address()+("80".equals(htp.server_port)?"":(":"+htp.server_port)));
-		dc.pl(" @ "+new File(htp.root_dir).getAbsolutePath()).p("  ").pl("io=B("+thdwatch.input+","+thdwatch.output+")");
+		dc.brush(0xffffffff,true).textSize(7.0f).pos(0,17).dy(12);
+		dc.pl("http://"+dev.get_host_ip_address()+("80".equals(htp.server_port)?"":(":"+htp.server_port))+" @ "+new File(htp.root_dir).getAbsolutePath());
+		dc.pl("(input,output)=B("+thdwatch.input+","+thdwatch.output+")");
 		dc.pl("");
-		htp.stats_to(new osnewliner(){public void on_newline(String line) throws Throwable{
-			dc.pl(line);
-		}});
-		dc.cr();
-		thdwatch.print_fieldnames_to(new osnewliner(){public void on_newline(String line) throws Throwable{
-			dc.pl(line);
-		}},"\n");
-		thdwatch.print_fields_to(new osnewliner(){public void on_newline(String line) throws Throwable{
-			dc.pl(line);
-		}},"\n");
-		dc.pl("");
+		if(dev.state().menu){
+			thdwatch.print_fields2_to(new osnewliner(){public void on_newline(String line) throws Throwable{
+				dc.pl(line);
+			}},new byte[]{'\n'},new byte[]{'\n','\n'},"                ");
+			dc.pl("");
+		}else{
+			htp.stats_to(new osnewliner(){public void on_newline(String line) throws Throwable{
+				dc.pl(line);
+			}});
+			dc.cr();			
+		}
 	}
-	public void update(final state state)throws Throwable{
+	public void update(final device dev)throws Throwable{
 		if(!started){
 			started=true;
 			new Thread(this,this.getClass().getName()+".htp").start();
 		}
 		if(bgcluketon)
-			bgcluket.update(state);
+			bgcluket.update(dev);
 	}
 	@Override public void run(){
 		try{

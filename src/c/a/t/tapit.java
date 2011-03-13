@@ -5,6 +5,7 @@ import java.util.Random;
 import android.view.KeyEvent;
 import c.a.cluket;
 import c.a.dc;
+import c.a.device;
 import c.a.state;
 public final class tapit implements cluket{
 	private static final long serialVersionUID=1L;
@@ -18,17 +19,18 @@ public final class tapit implements cluket{
 	private int targetsleft;
 	private Random random=new Random(0);
 	private long target_t_ms;
-	public void paint(final state state,final dc dc){
+	public void paint(final device dev,final dc dc){
 		dc.clr(0,0,0);
 		for(final dot t:targets)
 			t.paint(dc);
 		dc.brush(0xffffffff,true);
+		final state state=dev.state();
 		dc.drwtxt(0,state.scr_h-10,"score: "+score+"  tapits: "+targetsleft+"  rate: "+newtargetevery_ms+"  targets: "+targets.size());
 		dc.brush(0xff000000,true);
 		dc.drwcrcl(state.touch_x,state.touch_y,r);
 	}
-	
-	public void update(final state state){
+	public void update(final device dev){
+		final state state=dev.state();
 		if((state.keys[KeyEvent.KEYCODE_A]&1)!=0){
 			dot.anti_alias=!dot.anti_alias;
 			if((state.keys[KeyEvent.KEYCODE_A]&2)!=0){
@@ -57,7 +59,6 @@ public final class tapit implements cluket{
 			targets.add(new dot(rnd(0,state.scr_w),rnd(0,state.scr_h),rnd(tgt_r_min,tgt_r_max),0xff000000+(int)rnd(0.0f,(float)0xffffff),state.t));
 			targetsleft++;
 		}
-
 		for(final Iterator<dot> i=targets.iterator();i.hasNext();){
 			final dot t=i.next();
 			final float dx=t.x-state.touch_x;
@@ -70,7 +71,6 @@ public final class tapit implements cluket{
 			targetsleft--;
 			score++;
 		}
-
 		newtargetevery_ms--;
 		if(newtargetevery_ms<0)
 			newtargetevery_ms=newtargetevery_ms_def;
