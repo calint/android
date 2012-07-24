@@ -43,7 +43,7 @@ final public class b{
 	public static String id="aaaa";
 	public static String root_dir=".";
 	public static String server_port="8888";
-	public static boolean try_file=true;
+	public static boolean try_file=false;
 	public static boolean try_rc=true;
 	public static boolean thd_watch=true;
 	public static boolean thread_pool=true;
@@ -73,6 +73,7 @@ final public class b{
 	public static Set<String>resources_paths=new HashSet<String>(Arrays.asList("x.js","x.css","upload.jar"));
 	public static boolean enable_ssl=false;
 	public static boolean enable_cluster=false;
+	public static boolean enable_upload=false;
 	public static long timeatload=System.currentTimeMillis();
 	public static String timeatloadstrhtp=tolastmodstr(timeatload);
 	private final static LinkedList<req>pending_req=new LinkedList<req>();
