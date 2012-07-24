@@ -157,7 +157,7 @@ public final class req{
 				throw new Error("nocookie");
 			contentLength=Long.parseLong(contentLength_s);
 			contentType=hdrs.get(hk_content_type);
-			if(contentType.startsWith("file;")){
+			if(b.enable_upload&&contentType.startsWith("file;")){
 				final String[]q=contentType.split(";");
 				upload_lastmod_s=q.length>1?q[1]:new SimpleDateFormat("yyyy-MM-dd--HH:mm:ss.SSS").format(new Date());
 //				final String range=q[3];
@@ -172,7 +172,7 @@ public final class req{
 				state=state_content_upload;
 				parse_content_upload();
 				return;
-			}else if(contentType.startsWith("dir;")){
+			}else if(b.enable_upload&&contentType.startsWith("dir;")){
 				final String[]q=contentType.split(";");
 				final String lastmod_s=q[1];
 				final path p=b.path(b.sessions_dir).get(sesid).get(path_s);

@@ -87,9 +87,10 @@ public final class path implements Serializable{
 	}
 	//? rm(proglog)
 	public void append(final String line,final String eol)throws IOException{
-		if(!file.exists())
-			if(!file.getParentFile().mkdirs())
-				throw new Error();
+		final File dir=file.getParentFile();
+		if(dir!=null&&!dir.exists())
+			if(!dir.mkdirs())
+				throw new Error("cannot mkdir "+file.getParentFile());
 		final OutputStream os=outputstream(true);
 		final byte[]ba=b.tobytes(line);
 		os.write(ba);
