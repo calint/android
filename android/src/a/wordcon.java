@@ -1,13 +1,15 @@
 package a;
 import java.util.HashSet;
 import java.util.Set;
-
 import b.a;
 import b.xwriter;
 public class wordcon extends a{
 	static final long serialVersionUID=1;
 	public a txt;
 	public void to(final xwriter x) throws Throwable{
+		x.style();
+		x.css("textarea.editor","border:1px dotted blue;width:100%;height:640px;");
+		x.styleEnd();
 		x.ax(this,"ok",":: wordcon");
 		x.inputTextArea(txt,"editor").br();
 	}
