@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.InetAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.SelectionKey;
@@ -53,7 +54,7 @@ public final class req{
 	private final static String s_slash="/";
 //	private static final byte[]ba_page_header="<!doctype html><link rel=stylesheet href=/x.css><script src=/x.js></script><body onload=$l()><form onsubmit=return(false)>".getBytes();
 	private static final byte[]ba_page_header="<!doctype html><link rel=stylesheet href=/x.css><script src=/x.js></script><body onload=$l()>".getBytes();
-	private static final byte[]ba_page_footer="".getBytes();
+//	private static final byte[]ba_page_footer="".getBytes();
 	private final static int state_method=1;
 	private final static int state_uri=2;
 	private final static int state_prot=3;
@@ -146,7 +147,7 @@ public final class req{
 		state=state_method;
 	}
 	private void do_after_header()throws Throwable{
-		assertaccess();
+//		assertaccess();
 		final String ka=hdrs.get(hk_connection);
 		if(ka!=null)
 			connection_keep_alive=hv_keep_alive.equalsIgnoreCase(ka);
@@ -248,10 +249,10 @@ public final class req{
 		c.validate(t,ifmodsince);
 		reply2(c);
 	}
-	private void assertaccess(){
-		if(path_s.startsWith("/localhost")&&!sockch.socket().getRemoteSocketAddress().toString().startsWith("/0:0:0:0:0:0:0:1"))
-			throw new Error("may only be accessed from localhost");
-	}
+//	private void assertaccess(){
+//		if(path_s.startsWith("/localhost")&&!sockch.socket().getRemoteSocketAddress().toString().startsWith("/0:0:0:0:0:0:0:1"))
+//			throw new Error("may only be accessed from localhost");
+//	}
 	private boolean decodecookie(){
 		sesid=hdrs.get(hk_cookie);
 		if(sesid==null)
@@ -524,7 +525,7 @@ public final class req{
 				w=(a)Class.forName(clsnm).newInstance();
 			}catch(Throwable e1){
 				final oschunked os=reply_chunked(h_http404,text_plain_utf8,null);
-				new xwriter(os).p(path_s).nl().p(b.stacktraceline(e)).nl().p(b.stacktraceline(e1)).nl();
+				new xwriter(os).p(path_s).nl().nl().p(b.stacktraceline(e)).nl().nl().p(b.stacktraceline(e1)).nl();
 				os.finish();
 				return;
 			}}
@@ -601,9 +602,9 @@ public final class req{
 			os.write(ba_page_header);
 		final xwriter x=new xwriter(os);
 		try{w.to(x);}catch(final Throwable t){b.log(t);x.pre().p(b.stacktrace(t));}
-		if(!isbin)
-			if(!b.page_footer_ommit)
-				os.write(ba_page_footer);
+//		if(!isbin)
+//			if(!b.page_footer_ommit)
+//				os.write(ba_page_footer);
 		os.finish();
 	}
 	private void reply2(final chdresp c) {
@@ -655,7 +656,8 @@ public final class req{
 	}
 	
 	private boolean try_rc()throws Throwable{
-		final String p=pth.toString();
+//		final String p=pth.toString();
+		final String p=pth.name();
 		if(!b.resources_paths.contains(p))
 			return false;		
 		final String rcpth="/"+req.class.getPackage().getName()+"/"+p;
@@ -818,4 +820,5 @@ public final class req{
 	boolean is_sock(){return state==state_sock;}
 	sock.op sock_prop_read()throws Throwable{return sck.read();}
 	sock.op sock_prop_write()throws Throwable{return sck.write();}
+	public InetAddress ip(){return sockch.socket().getInetAddress();}
 }

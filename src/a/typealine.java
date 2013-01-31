@@ -3,7 +3,6 @@ import static b.b.rndint;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import b.a;
-import b.path;
 import b.req;
 import b.xwriter;
 public class typealine extends a{
@@ -15,6 +14,7 @@ public class typealine extends a{
 	public void to(final xwriter x)throws Throwable{
 		x.title("typealine");
 		x.style();
+		x.css("input.line","border:0;width:320px;border-bottom:1px dotted grey;");
 		x.css(".box","text-align:center;border:1px dotted blue;padding:7px;");
 		x.css(".line","width:250px;");
 		x.styleEnd();
@@ -25,8 +25,6 @@ public class typealine extends a{
 	public void ax_a(final xwriter x,final String[]p)throws Throwable{
 		final SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd---hh:mm:ss.SSS---");
 		final String line=s.toString();
-//		final path pth=req.get().session().path("log.txt");
-//		pth.append(simpleDateFormat.format(new Date())+line,"\n");
 		req.get().session().path("log.txt").append(simpleDateFormat.format(new Date())+line,"\n");
 		upd();
 		s.clr();

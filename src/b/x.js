@@ -35,6 +35,17 @@ $s=function(eid,txt){
 			ui.qpb(e.id);
 	}
 }
+$p=function(eid,txt){
+	var e=$(eid);
+	if(e.nodeName=="INPUT"||e.nodeName=="TEXTAREA"||e.nodeName=="OUTPUT"){
+		e.value+=txt;
+		ui.qpb(e.id);
+	}else{
+		e.innerHTML+=txt;
+		if(e.contentEditable=="true")
+			ui.qpb(e.id);
+	}
+}
 $l=function(){if(ui.keys)document.onkeyup=ui.onkey;}
 $a=function(eid,a,v){$(eid).setAttribute(a,v);}
 $r=function(ev,ths,axpb){if(!ev)ev=window.event;ui.qpb(ths.id);if(ev.keyCode!=13)return true;$x(axpb);return false;}
@@ -77,12 +88,14 @@ ui._onreadystatechange=function(){
 		var s=this.responseText.charAt(this.responseText.length-1);
 		if(s!='\n'){
 			$d(" * not eol "+(this.responseText.length-this._jscodeoffset));
+			//$d(s);
+			//$d(this.responseText);
 			break;
 		}
 		var jscode=this.responseText.substring(this._jscodeoffset);
-		$d("~~~~~~~ eval "+jscode.length+" bytes  ~~~~~~~");
+		$d(" *** run "+jscode.length+" bytes javascript ***");
 		$d(jscode);
-		$d("~~~~~~~ ~~~~~~~ ~~~~~~~ ~~~~~~~");
+		$d(" *** *** *** *** *** *** *** *** *** *** *** ***");
 		this._jscodeoffset+=jscode.length;
 		eval(jscode);
 		break;
@@ -91,8 +104,18 @@ ui._onreadystatechange=function(){
 		this._hasopened=null;//? firefox quirkfix1
 		this._pd=null;
 		ui._pbls=[];
+	
+	
+		var jscode=this.responseText.substring(this._jscodeoffset);
+		if(jscode.length>0){
+			$d("[*** run "+jscode.length+" bytes javascript");
+			$d(jscode);
+			$d("[***");
+			this._jscodeoffset+=jscode.length;
+			eval(jscode);
+		}
 		this._dt=new Date().getMilliseconds()-this._t0;
-		$d("####### "+this._dt+" ms ~~~~~~~ ~~~~~~~ ~~~~~~~");
+		$d(">>>>>>>> reqtime: "+this._dt+" ms");
 		break;		
 	}
 }
@@ -100,19 +123,19 @@ ui._pbls=[];
 ui.qpb=function(id){
 	$d("ui.qpb("+id+")");
 	if(ui.qpbhas(id))return;ui._pbls[id]=id;
-	$d("ui.qpb("+id+") added");
+	$d("ui.qpb("+id+") added ["+$(id).value+"]");
 }
 ui.qpbhas=function(id){return id in ui._pbls;}
 ui._axc=1;
 $x=function(pb){
 	ui._axc++;
-	$d("#### "+ui._axc+" ~~~~~~~ ~~~~~~~ ~~~~~~~ ");
+	$d("<<<<<<<< ajax req #"+ui._axc);
 	var post='$='+pb+'\r';
 	for(var id in ui._pbls){
 		var e=$(id)
 		$d(id+" "+(e?e.nodeName:""));
 		post+=e.id+'=';			
-		if(e.value)
+		if(e.value!==undefined)
 			post+=ui._clnfldvl(e.value);
 		else{
 			post+=ui._clnfldvl(e.innerHTML);

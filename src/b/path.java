@@ -19,6 +19,7 @@ import java.io.Writer;
 import java.nio.ByteBuffer;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
+//import java.nio.channels.SeekableByteChannel;
 public final class path implements Serializable{
 	static final long serialVersionUID=1;
 	private File file;
@@ -88,8 +89,9 @@ public final class path implements Serializable{
 	//? rm(proglog)
 	public void append(final String line,final String eol)throws IOException{
 		if(!file.exists())
-			if(!file.getParentFile().mkdirs())
-				throw new Error();
+			if(!file.getParentFile().exists())
+				if(!file.getParentFile().mkdirs())
+					throw new Error();
 		final OutputStream os=outputstream(true);
 		final byte[]ba=b.tobytes(line);
 		os.write(ba);
@@ -99,6 +101,7 @@ public final class path implements Serializable{
 		}
 		os.close();
 	}
+	public void append(final String line)throws IOException{append(line,null);}
 	public void append(final String[]lines,final String eol)throws IOException{
 		if(!file.exists())
 			if(!file.getParentFile().mkdirs())
@@ -177,12 +180,14 @@ public final class path implements Serializable{
 			throw new Error();
 		os.close();
 	}
-	public MappedByteBuffer mappedbbrw(final int len_b)throws FileNotFoundException,IOException{
-		return mappedbb(false,len_b);
-	}
-	public MappedByteBuffer mappedbb(final boolean ro,final int len_b)throws FileNotFoundException,IOException{
-		final MappedByteBuffer out=new RandomAccessFile(toString(),ro?"r":"rw").getChannel().map(ro?FileChannel.MapMode.READ_ONLY:FileChannel.MapMode.READ_WRITE,0,len_b);
-		return out;
+//	public MappedByteBuffer mappedbbrw(final int len_b)throws FileNotFoundException,IOException{
+//		return mappedbb(false,len_b);
+//	}
+//	public SeekableByteChannel seekableByteChannel(final boolean ro)throws FileNotFoundException{
+//		return new RandomAccessFile(toString(),ro?"r":"rw").getChannel();
+//	}
+	public MappedByteBuffer mappedbb(final boolean ro,final long pos_b,final long len_b)throws FileNotFoundException,IOException{
+		return new RandomAccessFile(toString(),ro?"r":"rw").getChannel().map(ro?FileChannel.MapMode.READ_ONLY:FileChannel.MapMode.READ_WRITE,pos_b,len_b);
 	}
 //	private void assert_access() throws IOException{
 //	String uri=file.toString().replace('\\','/');
@@ -225,5 +230,6 @@ public final class path implements Serializable{
 		to(ba);
 		return ba.toString("utf8");
 	}
+	//? thisisinorpisin
 	public boolean isin(final path p){try{return fullpath().startsWith(p.fullpath());}catch(Throwable t){throw new Error(t);}}
 }

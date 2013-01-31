@@ -4,7 +4,7 @@ import b.xwriter;
 public class utf extends a{
 	private static final long serialVersionUID=1;
 	public void to(xwriter x) throws Throwable{
-		x.style().p("pre.glyphs{font-size:31px}").styleEnd();
+		x.style().p("pre.glyphs{font-family:monospaced;font-size:32px}").styleEnd();
 		x.tag("center").code().pre("glyphs");
 		char ch=0;
 		final int lines=0x20000/33;

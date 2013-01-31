@@ -57,7 +57,7 @@ final public class b{
 	public static int io_buf_B=64*K;
 	public static int chunk_B=64*K;
 	public static String default_directory_file="index.html";
-	public static String default_package_class="£";
+	public static String default_package_class="$";
 	public static boolean gc_before_stats=false;
 	public static int hash_size_session_values=32;
 	public static int hash_size_sessions_store=4*K;
@@ -305,6 +305,7 @@ final public class b{
 		ps.println("         sessions: "+session.all().size());
 		ps.println("     cached files: "+(req.cachef_size()>>10)+" KB");
 		ps.println("      cached uris: "+(req.cacheu_size()>>10)+" KB");
+		ps.println("        classpath: "+System.getProperty("java.class.path"));
 		final Runtime rt=Runtime.getRuntime();
 		if(gc_before_stats)
 			rt.gc();
@@ -336,8 +337,8 @@ final public class b{
 	public static byte[]tobytes(final String v){try{return v.getBytes(strenc);}catch(UnsupportedEncodingException e){throw new Error(e);}}
 	public static String sessionhref(final String sessionid){return sessions_dir+"/"+sessionid+"/";}
 	public static boolean isempty(final String s){return s==null||s.length()==0;}
-	public static path path(final Class<?>cls){return path("/"+cls.getName().replace('.','/'));}
+//	public static path path(final Class<?>cls){return path("/"+cls.getName().replace('.','/'));}
 	public static String isempty(final String o,final String def){return isempty(o)?def:o;}
 	public static Set<String>sessionsids(){return Collections.unmodifiableSet(session.all().keySet());}//?
-	public static boolean page_footer_ommit=false;
+//	public static boolean page_footer_ommit=false;
 }

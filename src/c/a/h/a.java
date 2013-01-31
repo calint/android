@@ -19,12 +19,12 @@ public class a implements cluket,Runnable{
 		d.pl("http://"+dev.get_host_ip_address()+("80".equals(b.b.server_port)?"":(":"+b.b.server_port))+" @ "+new File(b.b.root_dir).getAbsolutePath());
 		d.pl("(input,output)=B("+thdwatch.input+","+thdwatch.output+")");
 		if(dev.state().menu){
-			thdwatch.print_fields2_to(new osnl(){public void on_newline(String line) throws Throwable{
+			thdwatch.print_fields2_to(new osnl(){public void onnewline(String line) throws Throwable{
 				d.pl(line);
 			}},new byte[]{'\n'},new byte[]{'\n','\n'},"                ");
 			d.pl("");
 		}else{
-			thdwatch.print_fields_to(new osnl(){public void on_newline(String line) throws Throwable{
+			thdwatch.print_fields_to(new osnl(){public void onnewline(String line) throws Throwable{
 				d.pl(line);
 			}},"\n");
 			d.cr();			
@@ -39,10 +39,10 @@ public class a implements cluket,Runnable{
 			bgcluket.update(dev);
 	}
 	public void run(){try{
-			b.b.server_port="8888";
+//			b.b.server_port="8888";
 			b.b.root_dir="/sdcard/htp/";
-			b.b.cache_files=true;
-			b.b.cache_uris=true;
+//			b.b.cache_files=true;
+//			b.b.cache_uris=true;
 			b.b.thd_watch=false;
 			b.b.thread_pool_size=4;
 			b.b.main(new String[]{});

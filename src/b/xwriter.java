@@ -16,10 +16,13 @@ public final class xwriter{
 	public xwriter p(final long n){return p(Long.toString(n));}
 	public xwriter pl(final String s){return p(s).nl();}
 	public xwriter tag(final String name){return p("<").p(name).p(">");}
+	public xwriter tag(final String name,final String id){return p("<").p(name).p(" id=").p(id).p(">");}
 	public xwriter tago(final String name){return p("<").p(name);}
+//	public xwriter tago(final String name,final String id){return p("<").p(name).p(" id=").p(id);}
 	public xwriter attrdef(final a a){final String wid=a.id();return attr("id",wid);}
 	public xwriter attr(final String name,final int value){return p(" ").p(name).p("=").p(value);}
 	public xwriter attr(final String name,final String value){return p(" ").p(name).p("=\"").p(xwriter.encquot(value)).p("\"");}
+	public xwriter attr(final String name){return p(" ").p(name);}
 	public xwriter tagoe(){return p(">");}
 	public xwriter tagoec(){return p("/>");}
 	public xwriter tagEnd(final String name){return p("</").p(name).p(">");}
@@ -37,7 +40,9 @@ public final class xwriter{
 		p(">").p(html).p("</a>");
 		return this;
 	}
+	public xwriter ax(final a a,final String html){return ax(a,null,html);}
 	public xwriter axBgn(final a a,final String args){return tago("a").attrdef(a).attr("href","javascript:$x('"+a.id()+" "+args+"')").tagoe();}
+	public xwriter axBgn(final a a){return tago("a").attrdef(a).attr("href","javascript:$x('"+a.id()+"')").tagoe();}
 	public xwriter axEnd(){return tagEnd("a");}
 	public xwriter br(){return tag("br").nl();}
 	public xwriter div(final String cls){return tago("div").attr("class",cls).tagoe();}
@@ -59,7 +64,7 @@ public final class xwriter{
 	public xwriter style(){return tag("style");}
 	public xwriter styleEnd(){return tagEnd("style");}
 	public xwriter td(){return tag("td");}
-	public xwriter td(final String cls){return tago("td").attr("class",cls).tagoe();}
+	public xwriter td(final String cls){if(cls==null||cls.length()==0) return td();return tago("td").attr("class",cls).tagoe();}
 	public xwriter tdEnd(){return tagEnd("td");}
 	public xwriter th(){return tag("th");}
 	public xwriter th(final int colspan){return tago("th").attr("colspan",colspan).tagoe();}
@@ -71,7 +76,7 @@ public final class xwriter{
 	public xwriter ul(){return tag("ul");}
 	public xwriter ulEnd(){return tagEnd("ul");}
 	public xwriter li(){return tag("li");}
-	public xwriter li(final String cls){return tago("li").attr("class",cls).tagoe();}
+	public xwriter li(final String cls){if(cls==null)return li();return tago("li").attr("class",cls).tagoe();}
 	public xwriter code(){return tag("code");}
 	public xwriter codeEnd(){return tagEnd("code");}
 	public xwriter rend(final a a)throws Throwable{if(a==null)return this;a.to(this);return this;}
@@ -142,6 +147,7 @@ public final class xwriter{
 	public xwriter xu(final String id,final String s){return p("$s('").p(id).p("','").jsstr(s).pl("');");}
 	public xwriter xub(final a a){p("$s('").p(a.id()).p("','");return new xwriter(new osjsstr(os));}
 	public xwriter xube(){return pl("');");}
+	public xwriter xua(final a a)throws Throwable{a.to(xub(a));return xube();}
 	public xwriter xinterval(final a a,final String ax,final int ms){return p("setInterval(\"$x('").p(a.id()).p(" ").p(ax).p("')\",").p(ms).pl(");");}
 	private xwriter xhide(final a a,final boolean hide){
 		//? bug style block  display:inherit
@@ -153,4 +159,21 @@ public final class xwriter{
 	public xwriter xreload(){return pl("location.reload(true);");}
 	public xwriter xfocus(final a a){return p("$f('").p(a.id()).pl("');");}
 	public xwriter xtitle(final String s){return p("$t('").jsstr(b.isempty(s,"")).pl("');");}
+	public xwriter xp(final a a,final String s){return p("$p('").p(a.id()).p("','").jsstr(s).pl("');");}
+	public xwriter ul(final String cls){return tago("ul").attr("class",cls).tagoe();}
+	public xwriter cssfont(final String name,final String url){
+		return p("@font-face{font-family:").p(name).p(";src:url(").p(url).p(");}");
+	}
+
+	
+//	public xwriter img(final String srcdim){
+//		final String[]sa=srcdim.split("\\.");
+//		if(sa.length>2){
+//			final String[]da=sa[sa.length-2].split("x");
+//			if(da.length>2)
+//				p("<img width=").p(da[0]).p(" height=").p(da[1]).p(" src=").p(srcdim).p(">");
+//			return this;
+//		}
+//		return p("<img src=").p(srcdim).p(">");
+//	}
 }

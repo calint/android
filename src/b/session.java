@@ -43,6 +43,7 @@ public final class session implements Serializable{
 	private String id;
 	private Map<String,Serializable>kvp;
 	int nreq;
+	private long bits=1;
 	session(final String id){
 		this.id=id;
 		kvp=Collections.synchronizedMap(new HashMap<String,Serializable>(b.hash_size_session_values));
@@ -65,4 +66,9 @@ public final class session implements Serializable{
 			return "";
 		return fn.substring(href.length()+1);
 	}
+	public long bits(){return bits;}
+	public void bits(final long b){bits=b;}
+	public boolean bitshasany(final long b){return (bits|b)!=0;}
+	public boolean bitshasall(final long b){return (bits&b)==b;}
+	public void remove(final String key){kvp.remove(key);}
 }
