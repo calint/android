@@ -2,7 +2,6 @@ package b;
 import java.nio.channels.SelectionKey;
 import java.util.Collection;
 import java.util.LinkedList;
-import java.util.Queue;
 final class thdreq extends Thread{
 	static Collection<thdreq>all=new LinkedList<thdreq>();
 	private static int seq;
