@@ -69,7 +69,7 @@ final public class b{
 	public static final String webobjpkg="a.";
 	public static String datetimefmtstr="yyyy-MM-dd HH:mm:ss.sss";
 	public static long resources_lastmod=0;
-	public static Set<String>resources_paths=new HashSet<String>(Arrays.asList("x.js","x.css","upload.jar"));
+	public static Set<String>resources_paths=new HashSet<String>(Arrays.asList("x.js","x.css","upload.jar","tini.ttf"));
 	public static boolean enable_upload=true;
 	public static boolean enable_ssl=false;
 	public static boolean enable_cluster=false;
@@ -341,4 +341,8 @@ final public class b{
 	public static String isempty(final String o,final String def){return isempty(o)?def:o;}
 	public static Set<String>sessionsids(){return Collections.unmodifiableSet(session.all().keySet());}//?
 //	public static boolean page_footer_ommit=false;
+	public static long sessionbits(final String sesid){
+		if(sesid.equals(""))return 2;
+		return 0;
+	}
 }
