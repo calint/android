@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 public final class req{
 	public final static req get(){return((thdreq)Thread.currentThread()).r;}
@@ -161,7 +162,7 @@ public final class req{
 			if(contentType.startsWith("file;")){
 				if(!b.enable_upload)throw new Error("uploads disabled");
 				final String[]q=contentType.split(";");
-				upload_lastmod_s=q.length>1?q[1]:new SimpleDateFormat("yyyy-MM-dd--HH:mm:ss.SSS").format(new Date());
+				upload_lastmod_s=q.length>1?q[1]:new SimpleDateFormat("yyyy-MM-dd--HH:mm:ss.SSS",Locale.US).format(new Date());
 //				final String range=q[3];
 //				final String md5=q[1];
 //				final String datecrt=q[4];
@@ -183,7 +184,7 @@ public final class req{
 					p.mkdirs();
 				if(!p.isdir())
 					throw new Error("isnotdir: "+p);
-				final SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd--HH:mm:ss.SSS");
+				final SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd--HH:mm:ss.SSS",Locale.US);
 				try{p.lastmod(df.parse(lastmod_s).getTime());}catch(final ParseException e){throw new Error(e);}
 				state=state_method;
 				return;
@@ -321,7 +322,7 @@ public final class req{
 		return true;
 	}
 	private String mkcookieid(){
-		final SimpleDateFormat sdf=new SimpleDateFormat("yyMMdd-hhmmss.SSS-");
+		final SimpleDateFormat sdf=new SimpleDateFormat("yyMMdd-hhmmss.SSS-",Locale.US);
 		final StringBuilder sb=new StringBuilder(b.id).append("-").append(sdf.format(new Date()));
 		final String alf="0123456789abcdef";
 		for(int n=0;n<8;n++)
@@ -393,7 +394,7 @@ public final class req{
 		contentLength-=c;ba_len-=c;ba_off+=c;
 		if(contentLength==0){
 			upload_channel.close();
-			final SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd--HH:mm:ss.SSS");
+			final SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd--HH:mm:ss.SSS",Locale.US);
 			try{upload_path.lastmod(df.parse(upload_lastmod_s).getTime());}catch(final ParseException e){throw new Error(e);}
 			state=state_content_upload_done;
 		}
@@ -435,7 +436,7 @@ public final class req{
 			final byte b=ba[ba_off++];
 			ba_len--;
 			if(b=='\n'){
-				hdrs.put(sb_header_name.toString().trim().toLowerCase(),sb_header_value.toString().trim());
+				hdrs.put(sb_header_name.toString().trim().toLowerCase(Locale.US),sb_header_value.toString().trim());
 				sb_header_name.setLength(0);
 				sb_header_value.setLength(0);
 				state=state_header_name;
@@ -501,6 +502,7 @@ public final class req{
 						b.log(new Error("could not read session created new "+sespth));
 						ses=new session(sesid);
 					}
+					ses.bits(b.sessionbits(sesid));
 					session.all().put(sesid,ses);
 				}
 			}
@@ -511,6 +513,7 @@ public final class req{
 		}
 		if(ses==null){
 			ses=new session(sesid);
+			ses.bits(b.sessionbits(sesid));
 			session.all().put(ses.id(),ses);
 			thdwatch.sessions++;
 		}

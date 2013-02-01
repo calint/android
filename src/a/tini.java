@@ -8,11 +8,11 @@ public class tini extends a{
 	static final long serialVersionUID=1;
 	public void to(final xwriter x)throws Throwable{
 		x.style();
-		x.cssfont("tini","/ttf/tini.ttf");
+		x.cssfont("tini","/tini.ttf");
 		x.css("*","font-family:tini;font-size:4px");
 		x.styleEnd();
-		x.pre();
-//		x.pre().p("tini font").nl();
+//		x.pre();
+		x.pre().p("tini font").nl();
 		
 		print(new xwriter(new osltgt(x.outputstream())),b.b.path("/src"));
 //		b.b.path("/src/a/tini.java").to(x);

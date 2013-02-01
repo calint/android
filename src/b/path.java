@@ -12,13 +12,12 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.RandomAccessFile;
 import java.io.Reader;
 import java.io.Serializable;
 import java.io.Writer;
 import java.nio.ByteBuffer;
-import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
+import java.util.Locale;
 //import java.nio.channels.SeekableByteChannel;
 public final class path implements Serializable{
 	static final long serialVersionUID=1;
@@ -89,7 +88,7 @@ public final class path implements Serializable{
 	//? rm(proglog)
 	public void append(final String line,final String eol)throws IOException{
 		if(!file.exists())
-			if(!file.getParentFile().exists())
+			if(!file.getParentFile().isDirectory())
 				if(!file.getParentFile().mkdirs())
 					throw new Error();
 		final OutputStream os=outputstream(true);
@@ -148,7 +147,7 @@ public final class path implements Serializable{
 		final String fn=file.getName();
 		int ix=fn.lastIndexOf('.');
 		if(ix==-1)return "";
-		return fn.substring(ix+1).toLowerCase();
+		return fn.substring(ix+1).toLowerCase(Locale.US);
 	}
 	public String uri(){
 		String s=file.getPath().substring(b.root_dir.length());
@@ -186,9 +185,9 @@ public final class path implements Serializable{
 //	public SeekableByteChannel seekableByteChannel(final boolean ro)throws FileNotFoundException{
 //		return new RandomAccessFile(toString(),ro?"r":"rw").getChannel();
 //	}
-	public MappedByteBuffer mappedbb(final boolean ro,final long pos_b,final long len_b)throws FileNotFoundException,IOException{
-		return new RandomAccessFile(toString(),ro?"r":"rw").getChannel().map(ro?FileChannel.MapMode.READ_ONLY:FileChannel.MapMode.READ_WRITE,pos_b,len_b);
-	}
+//	public MappedByteBuffer mappedbb(final boolean ro,final long pos_b,final long len_b)throws FileNotFoundException,IOException{
+//		return new RandomAccessFile(toString(),ro?"r":"rw").getChannel().map(ro?FileChannel.MapMode.READ_ONLY:FileChannel.MapMode.READ_WRITE,pos_b,len_b);
+//	}
 //	private void assert_access() throws IOException{
 //	String uri=file.toString().replace('\\','/');
 //	if(uri.startsWith("./"))

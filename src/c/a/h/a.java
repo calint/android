@@ -1,5 +1,6 @@
 package c.a.h;
 import java.io.File;
+import android.os.Environment;
 import b.osnl;
 import b.thdwatch;
 import c.a.cluket;
@@ -40,11 +41,11 @@ public class a implements cluket,Runnable{
 	}
 	public void run(){try{
 //			b.b.server_port="8888";
-			b.b.root_dir="/sdcard/htp/";
+			b.b.root_dir=new File(Environment.getExternalStorageDirectory().getPath(),"htp").getPath();
 //			b.b.cache_files=true;
 //			b.b.cache_uris=true;
 			b.b.thd_watch=false;
-			b.b.thread_pool_size=4;
+//			b.b.thread_pool_size=4;
 			b.b.main(new String[]{});
 	}catch(final Throwable e){throw new Error(e);}}
 }
