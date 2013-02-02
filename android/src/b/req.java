@@ -495,6 +495,7 @@ public final class req{
 	private sock sck;
 	private void resp_page()throws Throwable{
 		if(sesid!=null){
+			ses=session.all().get(sesid);
 			if(ses==null&&b.sessionfile_load){
 				final path sespth=b.path(b.sessionhref(sesid)+b.sessionfile);
 				if(sespth.exists()){

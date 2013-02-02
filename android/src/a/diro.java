@@ -6,6 +6,7 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Locale;
 import b.a;
 import b.b;
 import b.path;
@@ -26,7 +27,7 @@ public class diro extends a{
 	public final static int BIT_DISP_PATH=2048;
 	public final static int BIT_ALL=-1;
 	public a q;
-	protected final SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+	protected final SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS",Locale.US);
 	protected final NumberFormat nf=new DecimalFormat("###,###,###,###");
 	protected int bits=BIT_DISP_PATH|BIT_ALLOW_QUERY|BIT_ALLOW_FILE_LINK|BIT_ALLOW_DIR_ENTER|BIT_ALLOW_DIR_UP;
 //	protected int bits=BIT_ALL;
@@ -38,7 +39,7 @@ public class diro extends a{
 	public final void root(final path root){this.root=root;if(!path.isin(root))path=root;}
 	public final void bits(final int bits){this.bits=bits;}
 	public final boolean hasbit(final int i){return (bits&i)!=0;}
-	final public void to(final xwriter x) throws Throwable{
+	synchronized final public void to(final xwriter x) throws Throwable{
 		x.tago("span").attr("id",id()).tagoe();
 		final String[]files;
 		final boolean isfile=path.isfile();
@@ -169,20 +170,20 @@ public class diro extends a{
 	}
 	private void sort(final String[]files){
 		Arrays.sort(files,new Comparator<String>(){public int compare(final String a,final String b){
-			return a.toString().toLowerCase().compareTo(b.toString().toLowerCase());
+			return a.toString().toLowerCase(Locale.US).compareTo(b.toString().toLowerCase());
 		}});
 	}
 	final protected String ttoa(final long ms){return df.format(ms);}
 	final protected String btoa(final long n){return nf.format(n);}
 	private String query;
-	public final void ax_(final xwriter x,final String[]a)throws Throwable{
+	synchronized public final void ax_(final xwriter x,final String[]a)throws Throwable{
 		if(!hasbit(BIT_ALLOW_QUERY))throw new Error("notallowed");
 		query=q.toString();
 		to(x.xub(this));x.xube();
 //		x.p("var e=$('").p(q.id()).p("');e.setSelectionRange(e.value.length,e.value.length)").nl();
 		x.xfocus(q);
 	}
-	public final void ax_e(final xwriter x,final String[]a)throws Throwable{
+	synchronized public final void ax_e(final xwriter x,final String[]a)throws Throwable{
 		if(!hasbit(BIT_ALLOW_DIR_ENTER))throw new Error("notallowed");
 		final String namedec=b.urldecode(a[2]);
 		path=path.get(namedec);
@@ -191,7 +192,7 @@ public class diro extends a{
 		x.xua(this);
  		x.xfocus(path.isfile()?bd:q);		
 	}
-	public final void ax_up(final xwriter x,final String[]a)throws Throwable{
+	synchronized public final void ax_up(final xwriter x,final String[]a)throws Throwable{
 		if(!hasbit(BIT_ALLOW_DIR_UP))throw new Error("notallowed");
 		final path p=path.parent();
 		if(p==null)
@@ -200,7 +201,7 @@ public class diro extends a{
 		x.xua(this);
 		x.xfocus(q);
 	}
-	public final void ax_c(final xwriter x,final String[]a)throws Throwable{
+	synchronized public final void ax_c(final xwriter x,final String[]a)throws Throwable{
 		if(!hasbit(BIT_ALLOW_FILE_CREATE))throw new Error("notallowed");
 		if(q.toString().length()==0){x.xalert("enter name");x.xfocus(q);return;}
 		path=path.get(q.toString());
@@ -210,13 +211,13 @@ public class diro extends a{
 		x.xua(this);
 		x.xfocus(bd);
 	}
-	public final void ax_d(final xwriter x,final String[]a)throws Throwable{
+	synchronized public final void ax_d(final xwriter x,final String[]a)throws Throwable{
 		if(!hasbit(BIT_ALLOW_DIR_CREATE))throw new Error("notallowed");
 		if(q.toString().length()==0){x.xalert("enter name");x.xfocus(q);return;}
 		path.get(q.toString()).mkdirs();
 		x.xua(this);
 	}
-	public final void ax_r(final xwriter x,final String[]a)throws Throwable{
+	synchronized public final void ax_r(final xwriter x,final String[]a)throws Throwable{
 		final path p=path.get(b.urldecode(a[2]));
 		if(path.isfile()&&!hasbit(BIT_ALLOW_FILE_DELETE))throw new Error("notallowed");
 		if(path.isdir()&&!hasbit(BIT_ALLOW_DIR_DELETE))throw new Error("notallowed");//? onlydir
@@ -224,9 +225,9 @@ public class diro extends a{
 		x.xua(this);
 		x.xfocus(q);
 	}
-	public void ax_s(final xwriter x,final String[]a)throws Throwable{
+	synchronized public void ax_s(final xwriter x,final String[]a)throws Throwable{
 		if(!hasbit(BIT_ALLOW_FILE_MODIFY))throw new Error("notallowed");
 		bd.to(path);
 	}
-	public void ax_sx(final xwriter x,final String[]a)throws Throwable{ax_s(x,a);ax_up(x,a);}
+	synchronized public void ax_sx(final xwriter x,final String[]a)throws Throwable{ax_s(x,a);ax_up(x,a);}
 }
