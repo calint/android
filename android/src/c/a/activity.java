@@ -1,12 +1,15 @@
 package c.a;
+import java.io.File;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.Locale;
 import android.app.Activity;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -14,19 +17,22 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.Window;
 import android.view.WindowManager;
-final public class activity extends Activity implements Runnable,SurfaceHolder.Callback,device{
+final public class activity extends Activity implements Runnable,device{
 	public static int dbg_level=1;
 	public static String cluketName="c.a.h.a";
 	private state state=new state();
 	private Thread thread;
 	private boolean on;
 	private SurfaceView surface;
+	public final SurfaceView surfaceView(){return surface;}
+	public static activity inst;
 	public activity(){
 		try{
 			state.cluket=(cluket)Class.forName(cluketName).newInstance();
 		}catch(Throwable t){
 			throw new Error(t);
 		}
+		inst=this;
 	}
 	public void onCreate(final Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
@@ -34,7 +40,19 @@ final public class activity extends Activity implements Runnable,SurfaceHolder.C
 			state=(state)savedInstanceState.getSerializable("state");
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		surface=new SurfaceView(this);
-		surface.getHolder().addCallback(this);
+		surface.getHolder().addCallback(new SurfaceHolder.Callback(){
+			public void surfaceCreated(final SurfaceHolder holder){
+				System.out.println("surface created");
+			}
+			public void surfaceChanged(final SurfaceHolder holder,final int format,final int width,final int height){
+				System.out.println("surface changed");
+				state.scr_w=width;
+				state.scr_h=height;
+			}
+			public void surfaceDestroyed(final SurfaceHolder holder){
+				System.out.println("surface destroyed");
+			}
+		});
 		setContentView(surface);
 	}
 	protected void onPause(){
@@ -58,8 +76,16 @@ final public class activity extends Activity implements Runnable,SurfaceHolder.C
 		on=true;
 		thread.start();
 	}
-	public void surfaceCreated(final SurfaceHolder holder){}
-	public void surfaceDestroyed(final SurfaceHolder holder){}
+	public void run2(){
+//		b.b.server_port="8888";
+		b.b.root_dir=new File(Environment.getExternalStorageDirectory().getPath(),"htp").getPath();
+//		b.b.cache_files=true;
+//		b.b.cache_uris=true;
+		b.b.thd_watch=false;
+//		b.b.thread_pool_size=4;
+		try{b.b.main(new String[]{});}catch(Throwable t){throw new Error(t);}
+		while(true)try{Thread.sleep(1000);}catch(InterruptedException ignored){}		
+	}
 	public void run(){
 		long fps_t0=0;
 		int fps_c=0;
@@ -108,6 +134,7 @@ final public class activity extends Activity implements Runnable,SurfaceHolder.C
 			surface.getHolder().unlockCanvasAndPost(canvas);
 			if(t_sleep>0)
 				try{Thread.sleep(t_sleep);}catch(InterruptedException ignored){}
+//			try{Thread.sleep(1000);}catch(InterruptedException ignored){}
 		}
 	}
 	private void thread_stop(){
@@ -140,22 +167,18 @@ final public class activity extends Activity implements Runnable,SurfaceHolder.C
 		state.touch_y=event.getY();
 		return true;
 	}
-	public void surfaceChanged(final SurfaceHolder holder,final int format,final int width,final int height){
-		state.scr_w=width;
-		state.scr_h=height;
-	}
 	public static void dbg(final int level,final String line){
 		if(dbg_level==0)
 			return;
 		if(dbg_level>=level)
 			Log.i("dbg",line);
 	}
-	@Override public String get_host_ip_address(){
+	public String get_host_ip_address(){
 		final WifiManager wifiManager=(WifiManager)getSystemService(WIFI_SERVICE);
 		final WifiInfo wifiInfo=wifiManager.getConnectionInfo();
 		final int ipAddress = wifiInfo.getIpAddress();
-		final String ip=String.format("%d.%d.%d.%d",(ipAddress&0xff),(ipAddress>>8&0xff),(ipAddress>>16&0xff),(ipAddress>>24&0xff));
+		final String ip=String.format(Locale.US,"%d.%d.%d.%d",(ipAddress&0xff),(ipAddress>>8&0xff),(ipAddress>>16&0xff),(ipAddress>>24&0xff));
 		return ip;
 	}
-	@Override public state state(){return state;}
+	public state state(){return state;}
 }
