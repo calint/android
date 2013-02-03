@@ -15,7 +15,7 @@ public class sensors extends a implements bin{
 	public String contenttype(){return "text/plain";}
 	public void to(final xwriter x)throws Throwable{
 		x.pl("getting sensor manager");
-		final SensorManager sm=(SensorManager)activity.inst.getSystemService(Context.SENSOR_SERVICE);
+		final SensorManager sm=(SensorManager)activity.get().getSystemService(Context.SENSOR_SERVICE);
 		x.pl("getting sensor");
 		final Sensor s=sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 		x.pl("register listener");

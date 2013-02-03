@@ -1,11 +1,13 @@
 package c.a;
 import java.io.File;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
 import android.app.Activity;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.hardware.Camera;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
@@ -17,6 +19,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.Window;
 import android.view.WindowManager;
+import b.path;
 final public class activity extends Activity implements Runnable,device{
 	public static int dbg_level=1;
 	public static String cluketName="c.a.h.a";
@@ -25,15 +28,36 @@ final public class activity extends Activity implements Runnable,device{
 	private boolean on;
 	private SurfaceView surface;
 	public final SurfaceView surfaceView(){return surface;}
-	public static activity inst;
+	private static activity inst;
+	final public static activity get(){return inst;}
 	public activity(){
+		inst=this;
 		try{
 			state.cluket=(cluket)Class.forName(cluketName).newInstance();
 		}catch(Throwable t){
 			throw new Error(t);
 		}
-		inst=this;
 	}
+	private SurfaceView camview;
+	public void camera_takepicture(final path pth)throws IOException{
+//		setContentView(camview);
+		final Camera cam=Camera.open();
+		cam.setPreviewDisplay(camview.getHolder());
+		cam.startPreview();
+		cam.takePicture(null,null,new Camera.PictureCallback(){public void onPictureTaken(byte[]d,Camera c){
+			System.out.println("cam jpeg data "+(d==null?0:d.length));
+			try{pth.writeba(d);}catch(Throwable t){
+				t.printStackTrace();
+			}
+			cam.stopPreview();
+			cam.release();
+			synchronized(cam){cam.notifyAll();}
+		}});
+		synchronized(cam){try{cam.wait(5000);}catch(InterruptedException e){}}		
+		System.out.println("take picture done");
+//		setContentView(surface);
+	}
+	///activity
 	public void onCreate(final Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
 		if(savedInstanceState!=null)
@@ -54,13 +78,30 @@ final public class activity extends Activity implements Runnable,device{
 			}
 		});
 		setContentView(surface);
+		camview=new SurfaceView(this);
+		camview.getHolder().setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+		camview.getHolder().addCallback(new SurfaceHolder.Callback(){
+			public void surfaceCreated(final SurfaceHolder holder){
+				System.out.println("camview surface created");
+			}
+			public void surfaceChanged(final SurfaceHolder holder,final int format,final int width,final int height){
+				System.out.println("camview surface changed");
+				state.scr_w=width;
+				state.scr_h=height;
+			}
+			public void surfaceDestroyed(final SurfaceHolder holder){
+				System.out.println("camview surface destroyed");
+			}
+		});
 	}
 	protected void onPause(){
 		super.onPause();
+		System.out.println("onpause");
 		thread_stop();
 	}
 	protected void onResume(){
 		super.onResume();
+		System.out.println("onresume");
 		final Window w=getWindow();
 		w.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		w.clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
@@ -68,25 +109,46 @@ final public class activity extends Activity implements Runnable,device{
 	}
 	public void onSaveInstanceState(final Bundle savedInstanceState){
 		super.onSaveInstanceState(savedInstanceState);
+		System.out.println("onsaveinstancestate");
 		thread_stop();
 		savedInstanceState.putSerializable("state",state);
 	}
-	private void thread_start(){
-		thread=new Thread(this,cluketName);
-		on=true;
-		thread.start();
+	public boolean dispatchKeyEvent(final KeyEvent event){
+		dbg(1,event.toString());
+		if(event.getRepeatCount()!=0)
+			return true;
+		final int keyCode=event.getKeyCode();
+		if(keyCode==KeyEvent.KEYCODE_MENU){
+			state.menu=!state.menu;
+			return true;
+		}
+		final int action=event.getAction();
+		if(action==KeyEvent.ACTION_DOWN){
+			state.keys[keyCode]|=1;
+		} else if(action==KeyEvent.ACTION_UP){
+			state.keys[keyCode]|=2;
+		}
+		return true;
 	}
-	public void run2(){
-//		b.b.server_port="8888";
-		b.b.root_dir=new File(Environment.getExternalStorageDirectory().getPath(),"htp").getPath();
-//		b.b.cache_files=true;
-//		b.b.cache_uris=true;
-		b.b.thd_watch=false;
-//		b.b.thread_pool_size=4;
-		try{b.b.main(new String[]{});}catch(Throwable t){throw new Error(t);}
-		while(true)try{Thread.sleep(1000);}catch(InterruptedException ignored){}		
+	public boolean dispatchTouchEvent(final MotionEvent event){
+		state.touch_x=event.getX();
+		state.touch_y=event.getY();
+		return true;
 	}
+	
+	///device
+	public String get_host_ip_address(){
+		final WifiManager wifiManager=(WifiManager)getSystemService(WIFI_SERVICE);
+		final WifiInfo wifiInfo=wifiManager.getConnectionInfo();
+		final int ipAddress = wifiInfo.getIpAddress();
+		final String ip=String.format(Locale.US,"%d.%d.%d.%d",(ipAddress&0xff),(ipAddress>>8&0xff),(ipAddress>>16&0xff),(ipAddress>>24&0xff));
+		return ip;
+	}
+	public state state(){return state;}
+	
+	///runnable
 	public void run(){
+		System.out.println("run");
 		long fps_t0=0;
 		int fps_c=0;
 		float fps=0;
@@ -134,8 +196,23 @@ final public class activity extends Activity implements Runnable,device{
 			surface.getHolder().unlockCanvasAndPost(canvas);
 			if(t_sleep>0)
 				try{Thread.sleep(t_sleep);}catch(InterruptedException ignored){}
-//			try{Thread.sleep(1000);}catch(InterruptedException ignored){}
 		}
+	}
+	public void run2(){
+//		b.b.server_port="8888";
+		b.b.root_dir=new File(Environment.getExternalStorageDirectory().getPath(),"htp").getPath();
+//		b.b.cache_files=true;
+//		b.b.cache_uris=true;
+		b.b.thd_watch=false;
+//		b.b.thread_pool_size=4;
+		try{b.b.main(new String[]{});}catch(Throwable t){throw new Error(t);}
+	}
+	
+	///
+	private void thread_start(){
+		thread=new Thread(this,cluketName);
+		on=true;
+		thread.start();
 	}
 	private void thread_stop(){
 		if(thread==null)
@@ -145,40 +222,10 @@ final public class activity extends Activity implements Runnable,device{
 		try{thread.join();}catch(InterruptedException ignored){}
 		thread=null;
 	}
-	public boolean dispatchKeyEvent(final KeyEvent event){
-		dbg(1,event.toString());
-		if(event.getRepeatCount()!=0)
-			return true;
-		final int keyCode=event.getKeyCode();
-		if(keyCode==KeyEvent.KEYCODE_MENU){
-			state.menu=!state.menu;
-			return true;
-		}
-		final int action=event.getAction();
-		if(action==KeyEvent.ACTION_DOWN){
-			state.keys[keyCode]|=1;
-		} else if(action==KeyEvent.ACTION_UP){
-			state.keys[keyCode]|=2;
-		}
-		return true;
-	}
-	public boolean dispatchTouchEvent(final MotionEvent event){
-		state.touch_x=event.getX();
-		state.touch_y=event.getY();
-		return true;
-	}
 	public static void dbg(final int level,final String line){
 		if(dbg_level==0)
 			return;
 		if(dbg_level>=level)
 			Log.i("dbg",line);
 	}
-	public String get_host_ip_address(){
-		final WifiManager wifiManager=(WifiManager)getSystemService(WIFI_SERVICE);
-		final WifiInfo wifiInfo=wifiManager.getConnectionInfo();
-		final int ipAddress = wifiInfo.getIpAddress();
-		final String ip=String.format(Locale.US,"%d.%d.%d.%d",(ipAddress&0xff),(ipAddress>>8&0xff),(ipAddress>>16&0xff),(ipAddress>>24&0xff));
-		return ip;
-	}
-	public state state(){return state;}
 }
