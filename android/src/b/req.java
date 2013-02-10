@@ -308,7 +308,8 @@ public final class req{
 		return true;
 	}
 	private boolean do_transfer_file()throws IOException{
-		//			long buf_size=socketChannel.socket().getSendBufferSize();
+		//? heavy
+//		final long buf_size=this.sockch.socket().getSendBufferSize();
 		final int buf_size=b.transfer_file_write_size;
 		while(transfer_file_remaining!=0){
 			try{
@@ -320,7 +321,8 @@ public final class req{
 				thdwatch.output+=c;
 			}catch(final IOException e){
 				if("sendfile failed: EAGAIN (Try again)".equals(e.getMessage())){
-					b.log(e);
+					thdwatch.eagain++;
+//					b.log(e);
 					return false;
 				}
 				throw e;
