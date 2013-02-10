@@ -231,4 +231,6 @@ public final class path implements Serializable{
 	}
 	//? thisisinorpisin
 	public boolean isin(final path p){try{return fullpath().startsWith(p.fullpath());}catch(Throwable t){throw new Error(t);}}
+	//? rename
+	public boolean moveto(final path p){return file.renameTo(new File(p.file,name()));}
 }
