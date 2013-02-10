@@ -105,6 +105,7 @@ public final class req{
 	private path upload_path;
 	private FileChannel upload_channel;
 	private String upload_lastmod_s;
+	private sock sck;
 	public session session(){return ses;}
 	public String path(){return path_s;}
 	public String query(){return query_s;}
@@ -160,7 +161,7 @@ public final class req{
 			contentLength=Long.parseLong(contentLength_s);
 			contentType=hdrs.get(hk_content_type);
 			if(contentType.startsWith("file;")){
-				if(!b.enable_upload)throw new Error("uploads disabled");
+				if(!b.enable_upload)throw new Error("uploadsdisabled");
 				final String[]q=contentType.split(";");
 				upload_lastmod_s=q.length>1?q[1]:new SimpleDateFormat("yyyy-MM-dd--HH:mm:ss.SSS",Locale.US).format(new Date());
 //				final String range=q[3];
@@ -176,7 +177,7 @@ public final class req{
 				parse_content_upload();
 				return;
 			}else if(contentType.startsWith("dir;")){
-				if(!b.enable_upload)throw new Error("uploads disabled");
+				if(!b.enable_upload)throw new Error("uploadsdisabled");
 				final String[]q=contentType.split(";");
 				final String lastmod_s=q[1];
 				final path p=b.path(b.sessions_dir).get(sesid).get(path_s);
@@ -361,7 +362,6 @@ public final class req{
 					break;
 			}
 			if(state==state_content_upload_done){
-//				reply(h_http200,null,null,null);
 				state=state_method;
 				if(ba_len==0)
 					return 2;
@@ -492,9 +492,9 @@ public final class req{
 		thdwatch.output+=sendpacket(bb_reply,bbi);
 		return new oschunked(this,b.chunk_B);
 	}
-	private sock sck;
 	private void resp_page()throws Throwable{
 		if(sesid!=null){
+			//? sessiongetandloadracing
 			ses=session.all().get(sesid);
 			if(ses==null&&b.sessionfile_load){
 				final path sespth=b.path(b.sessionhref(sesid)+b.sessionfile);
@@ -535,15 +535,15 @@ public final class req{
 			}}
 			if(w instanceof sock){
 				final sock s=(sock)w;
-				switch(s.sockinit(new sockio(sockch,selkey))){
-				case read:selkey.interestOps(SelectionKey.OP_READ);break;
-				case write:selkey.interestOps(SelectionKey.OP_WRITE);break;
+				state=state_sock;
+				sck=s;
+				switch(s.sockinit(hdrs,new sockio(sockch,selkey))){
+				case read:selkey.interestOps(SelectionKey.OP_READ);selkey.selector().wakeup();break;
+				case write:selkey.interestOps(SelectionKey.OP_WRITE);selkey.selector().wakeup();break;
 				case close:sockch.close();break;
 				case wait:selkey.interestOps(0);break;
 				default:throw new IllegalStateException();
 				}
-				state=state_sock;
-				sck=s;
 				return;
 //				new Thread(new Runnable(){public void run(){}});
 			}
@@ -614,11 +614,11 @@ public final class req{
 	private void reply2(final chdresp c) {
 		final ByteBuffer bb=ByteBuffer.allocate(512+(int)c.byteBuffer().limit());
 		//? bba
-		bb.put(req.h_http200);
-		bb.put(req.h_content_length).put(Long.toString(c.byteBuffer().limit()).getBytes());
+		bb.put(h_http200);
+		bb.put(h_content_length).put(Long.toString(c.byteBuffer().limit()).getBytes());
 		if(c.lastModified()!=null)
-			bb.put(req.h_last_modified).put(c.lastModified().getBytes());
-		bb.put(req.hkp_connection_keep_alive);
+			bb.put(h_last_modified).put(c.lastModified().getBytes());
+		bb.put(hkp_connection_keep_alive);
 		if(sesid_set){
 			for(final ByteBuffer b:new ByteBuffer[]{ByteBuffer.wrap(h_set_cookie),ByteBuffer.wrap(sesid.getBytes()),ByteBuffer.wrap(hk_cookie_append)}){
 				bb.put(b);

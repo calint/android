@@ -6,6 +6,7 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.Locale;
 import b.a;
 import b.b;
@@ -24,7 +25,9 @@ public class diro extends a{
 	public final static int BIT_ALLOW_DIR_CREATE=256;
 	public final static int BIT_ALLOW_DIR_DELETE=512;
 	public final static int BIT_ALLOW_FILE_MODIFY=1024;
-	public final static int BIT_DISP_PATH=2048;
+	public final static int BIT_ALLOW_SELECT=2048;
+	public final static int BIT_ALLOW_MOVE=4096;
+	public final static int BIT_DISP_PATH=8192;
 	public final static int BIT_ALL=-1;
 	public a q;
 	protected final SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS",Locale.US);
@@ -35,6 +38,7 @@ public class diro extends a{
 	protected path path=root;
 	protected boolean sort=true;
 	protected boolean sort_dirsfirst=true;
+	protected LinkedList<path>selpth=new LinkedList<path>();
 	public a bd;
 	public final void root(final path root){this.root=root;if(!path.isin(root))path=root;}
 	public final void bits(final int bits){this.bits=bits;}
@@ -43,6 +47,7 @@ public class diro extends a{
 		x.tago("span").attr("id",id()).tagoe();
 		final String[]files;
 		final boolean isfile=path.isfile();
+		final String query=q.toString();
 		if(b.isempty(query))
 			files=path.list();
 		else
@@ -68,6 +73,7 @@ public class diro extends a{
 		if(hasbit(BIT_ALLOW_QUERY))
 			x.css(q,"float:right;background:yellow;border:1px dotted green;text-align:right;width:179px;margin-left:7px");
 		x.styleEnd();
+		
 		x.table("f").nl();
 		x.tr().th();
 		if(hasbit(BIT_ALLOW_DIR_UP))
@@ -78,16 +84,13 @@ public class diro extends a{
 		if(hasbit(BIT_DISP_PATH)){
 			if(path.isin(root)){
 				String pp=path.fullpath().substring(root.fullpath().length());
-//				while(pp.length()>0&&pp.charAt(0)=='/')
-//					pp=pp.substring(1);
 				x.p(pp);
 			}
-//			x.p(path.toString());
 		}
-		
 		final String icnfile="◻";
 		final String icndir="⧉";
 		final String icndel="x";
+		final String icnsel="s";
 		x.tago("span").attr("style",";margin-left:22px;float:right").tagoe();
 		if(isfile){
 			x.ax(this,"s",icnfile);
@@ -132,7 +135,10 @@ public class diro extends a{
 				if(p.isfile()&&hasbit(BIT_ALLOW_FILE_DELETE))
 					x.td("del").ax(this,"r "+nameenc,icndel);				
 				if(p.isdir()&&hasbit(BIT_ALLOW_DIR_DELETE))
-					x.td("del").ax(this,"r "+nameenc,icndel);				
+					x.td("del").ax(this,"r "+nameenc,icndel);
+				if(hasbit(BIT_ALLOW_SELECT))
+					x.ax(this,"se "+nameenc," "+icnsel);
+				
 				x.td("date").p(ttoa(p.lastmod()));
 				final long size=p.size();
 				if(p.isfile())
@@ -152,8 +158,17 @@ public class diro extends a{
 			x.style().css(bd,"width:100%;height:100%;border:1px dotted green").styleEnd();
 			x.inputTextArea(bd,"ed");
 			x.focus(bd);
-		}else
+		}else{
+			if(hasbit(BIT_ALLOW_SELECT)){
+				x.style().css("div.sel","text-align:center").styleEnd();
+				x.div("sel");
+				x.ax(this,"m","m").br();
+				for(final path p:selpth)
+					x.p(p.toString()).br();
+				x.divEnd();
+			}
 			x.focus(q);
+		}
 		x.nl();
 		x.spanEnd();
 	}
@@ -175,11 +190,12 @@ public class diro extends a{
 	}
 	final protected String ttoa(final long ms){return df.format(ms);}
 	final protected String btoa(final long n){return nf.format(n);}
-	private String query;
+//	private String query;
 	synchronized public final void ax_(final xwriter x,final String[]a)throws Throwable{
 		if(!hasbit(BIT_ALLOW_QUERY))throw new Error("notallowed");
-		query=q.toString();
-		to(x.xub(this));x.xube();
+//		query=q.toString();
+		x.xuao(this);
+//		to(x.xub(this));x.xube();
 //		x.p("var e=$('").p(q.id()).p("');e.setSelectionRange(e.value.length,e.value.length)").nl();
 		x.xfocus(q);
 	}
@@ -230,4 +246,16 @@ public class diro extends a{
 		bd.to(path);
 	}
 	synchronized public void ax_sx(final xwriter x,final String[]a)throws Throwable{ax_s(x,a);ax_up(x,a);}
+	synchronized public void ax_se(final xwriter x,final String[]a)throws Throwable{
+		if(!hasbit(BIT_ALLOW_SELECT))throw new Error("notallowed");
+		final path p=path.get(b.urldecode(a[2]));
+		selpth.add(p);
+	}
+	synchronized public void ax_m(final xwriter x,final String[]a)throws Throwable{
+		if(!hasbit(BIT_ALLOW_MOVE))throw new Error("notallowed");
+		for(final path p:selpth){
+			p.moveto(path);
+		}
+		selpth.clear();
+	}
 }
