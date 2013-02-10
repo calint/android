@@ -210,7 +210,9 @@ final public class b{
 						}
 					}
 				}
-			}}catch(final Throwable e){log(e);}
+			}}catch(final Throwable e){
+				log(e);
+			}
 		}
 	}
 	private static void read(final SelectionKey sk,final req r)throws Throwable{

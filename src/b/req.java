@@ -307,16 +307,24 @@ public final class req{
 		state=state_method;
 		return true;
 	}
-	private boolean do_transfer_file()throws Throwable{
+	private boolean do_transfer_file()throws IOException{
 		//			long buf_size=socketChannel.socket().getSendBufferSize();
 		final int buf_size=b.transfer_file_write_size;
 		while(transfer_file_remaining!=0){
-			final long c=transfer_file_channel.transferTo(transfer_file_position,buf_size,sockch);
-			if(c==0)
-				return false;
-			transfer_file_position+=c;
-			transfer_file_remaining-=c;
-			thdwatch.output+=c;
+			try{
+				final long c=transfer_file_channel.transferTo(transfer_file_position,buf_size,sockch);
+				if(c==0)
+					return false;
+				transfer_file_position+=c;
+				transfer_file_remaining-=c;
+				thdwatch.output+=c;
+			}catch(final IOException e){
+				if("sendfile failed: EAGAIN (Try again)".equals(e.getMessage())){
+					b.log(e);
+					return false;
+				}
+				throw e;
+			}
 		}
 		transfer_file_channel.close();
 		state=state_method;
