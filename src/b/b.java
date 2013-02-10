@@ -25,6 +25,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Locale;
 import java.util.Set;
 import java.util.TimeZone;
 final public class b{
@@ -53,7 +54,7 @@ final public class b{
 	public static int cache_files_hashlen=K;
 	public static int cache_files_maxsize=64*K;
 	public static long cache_files_validate_dt=1000;
-	public static int transfer_file_write_size=64*K;
+	public static int transfer_file_write_size=256*K;
 	public static int io_buf_B=64*K;
 	public static int chunk_B=64*K;
 	public static String default_directory_file="index.html";
@@ -327,7 +328,7 @@ final public class b{
 	}
 	public static String stacktraceline(final Throwable e){return stacktrace(e).replace('\n',' ').replace('\r',' ').replaceAll("\\s+"," ").replaceAll(" at "," @ ");}
 	public static String tolastmodstr(final long t){
-		final SimpleDateFormat sdf=new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz");
+		final SimpleDateFormat sdf=new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz",Locale.US);
 		sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
 		final String s=sdf.format(new Date(t));
 		return s;

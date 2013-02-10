@@ -23,6 +23,7 @@ final public class thdwatch extends Thread{
 	public static long pages;
 	public static long posts;
 	public static long socks;
+	public static long eagain;
 	public static long _cachef;
 	public static long _threads;
 	public static long _memfree;
