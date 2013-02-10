@@ -320,6 +320,7 @@ public final class req{
 				transfer_file_remaining-=c;
 				thdwatch.output+=c;
 			}catch(final IOException e){
+				//?
 				//? differingmessagedependingonplatform
 //				if("sendfile failed: EAGAIN (Try again)".equals(e.getMessage())){
 //					thdwatch.eagain++;
