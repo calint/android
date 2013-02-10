@@ -164,6 +164,8 @@ public final class xwriter{
 	public xwriter cssfont(final String name,final String url){
 		return p("@font-face{font-family:").p(name).p(";src:url(").p(url).p(");}");
 	}
+	public xwriter xubo(final a a){p("$o('").p(a.id()).p("','");return new xwriter(new osjsstr(os));}
+	public xwriter xuao(final a a)throws Throwable{a.to(xubo(a));return xube();}
 
 	
 //	public xwriter img(final String srcdim){

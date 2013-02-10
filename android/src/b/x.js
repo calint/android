@@ -35,6 +35,7 @@ $s=function(eid,txt){
 			ui.qpb(e.id);
 	}
 }
+$o=function(eid,txt){$(eid).outerHTML=txt;}
 $p=function(eid,txt){
 	var e=$(eid);
 	if(e.nodeName=="INPUT"||e.nodeName=="TEXTAREA"||e.nodeName=="OUTPUT"){
