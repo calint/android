@@ -1,0 +1,45 @@
+p++ // frame
+c=4 // char width
+f=100 // inca
+f-=c
+l=-400 // incb
+l+=c
+
+a=400 // bmp ptr
+e=f00 // color=f00
+h=:txt
+
+ldc h b
+lp b
+  ldc h d
+  type nxt
+tx d p
+tyPE
+..
+type:
+lp c
+  lp c
+    shf d -1
+    ifn stc a e
+    ifp inc a
+    ifz inc a
+    inc e nxt
+  add a f nxt   
+add a l ret    
+
+// regs i-o free
+..
+copy:
+lp c 
+ ldc b d  
+ stc a d nxt ret  
+..
+txt:
+. 5 // len
+. 0175 0767 0043 0043
+. 0252 0126 ffff ffff
+. ffff ffff ffff ffff
+. ffff ffff ffff ffff
+
+
+
