@@ -55,6 +55,8 @@ final public class b{
 	public static int max_pending_connections=20000;// when overrun causes SYN flood warning
 	public static boolean tcpnodelay=true;
 	public static boolean save_sessions_at_shutdown=false;
+	public static long io_select_timeout_ms=0;
+	
 	public static long timeatload=System.currentTimeMillis();
 	public static String timeatloadstrhtp=tolastmodstr(timeatload);
 	public static PrintStream out=System.out;
@@ -75,8 +77,7 @@ final public class b{
 		ssc.register(sel,SelectionKey.OP_ACCEPT);
 		Runtime.getRuntime().addShutdownHook(new jvmsdh());
 		while(true)try{
-			sel.select(1000);
-//			sel.select();
+			sel.select(io_select_timeout_ms);
 			thdwatch.iokeys=sel.keys().size();
 			final Iterator<SelectionKey>it=sel.selectedKeys().iterator();
 			if(!it.hasNext())continue;
