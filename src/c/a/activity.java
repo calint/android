@@ -1,5 +1,4 @@
 package c.a;
-import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
@@ -7,7 +6,6 @@ import java.util.Locale;
 import android.app.Activity;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.hardware.Camera;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
@@ -18,7 +16,6 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.Window;
 import android.view.WindowManager;
-import b.path;
 final public class activity extends Activity implements Runnable,device{
 	public static int dbg_level=1;
 	public static String cluketName="c.a.h.a";
@@ -36,25 +33,6 @@ final public class activity extends Activity implements Runnable,device{
 		}catch(Throwable t){
 			throw new Error(t);
 		}
-	}
-	private SurfaceView camview;
-	public void camera_takepicture(final path pth)throws IOException{
-//		setContentView(camview);
-		final Camera cam=Camera.open();
-		cam.setPreviewDisplay(camview.getHolder());
-		cam.startPreview();
-		cam.takePicture(null,null,new Camera.PictureCallback(){public void onPictureTaken(byte[]d,Camera c){
-			System.out.println("cam jpeg data "+(d==null?0:d.length));
-			try{pth.writeba(d);}catch(Throwable t){
-				t.printStackTrace();
-			}
-			cam.stopPreview();
-			cam.release();
-			synchronized(cam){cam.notifyAll();}
-		}});
-		synchronized(cam){try{cam.wait(5000);}catch(InterruptedException e){}}		
-		System.out.println("take picture done");
-//		setContentView(surface);
 	}
 	///activity
 	public void onCreate(final Bundle savedInstanceState){
@@ -77,21 +55,6 @@ final public class activity extends Activity implements Runnable,device{
 			}
 		});
 		setContentView(surface);
-		camview=new SurfaceView(this);
-//		camview.getHolder().setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
-		camview.getHolder().addCallback(new SurfaceHolder.Callback(){
-			public void surfaceCreated(final SurfaceHolder holder){
-				System.out.println("camview surface created");
-			}
-			public void surfaceChanged(final SurfaceHolder holder,final int format,final int width,final int height){
-				System.out.println("camview surface changed");
-				state.scr_w=width;
-				state.scr_h=height;
-			}
-			public void surfaceDestroyed(final SurfaceHolder holder){
-				System.out.println("camview surface destroyed");
-			}
-		});
 	}
 	protected void onPause(){
 		super.onPause();
