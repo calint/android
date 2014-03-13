@@ -4,8 +4,12 @@ import java.text.NumberFormat;
 import java.util.Locale;
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
@@ -180,4 +184,21 @@ final public class activity extends Activity implements Runnable,device{
 		if(dbg_level>=level)
 			Log.i("dbg",line);
 	}
+	
+	
+	
+	
+	public location location(){
+		final LocationManager lm=(LocationManager)c.a.activity.get().getSystemService(Context.LOCATION_SERVICE);         
+		final location l=new location();
+		Location ll=lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+		if(ll==null)ll=lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+//		if(ll==null)ll=lm.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+		if(ll==null)return null;
+		l.latitude = ll.getLatitude();
+		l.longitude = ll.getLongitude();
+		l.accuracy_m=ll.getAccuracy();
+		return l;
+	}
+
 }
