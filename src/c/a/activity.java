@@ -8,7 +8,6 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
@@ -198,6 +197,7 @@ final public class activity extends Activity implements Runnable,device{
 		l.latitude = ll.getLatitude();
 		l.longitude = ll.getLongitude();
 		l.accuracy_m=ll.getAccuracy();
+//		l.bearing_deg=ll.getBearing();
 		return l;
 	}
 
