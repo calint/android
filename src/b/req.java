@@ -488,7 +488,9 @@ public final class req{
 		if(contentLength==0){
 			upload_channel.close();
 			final SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd--HH:mm:ss.SSS");
-			try{upload_path.lastmod(df.parse(upload_lastmod_s).getTime());}catch(final ParseException e){throw new Error(e);}
+			try{upload_path.lastmod(df.parse(upload_lastmod_s).getTime());}
+			catch(final ParseException e){throw new Error(e);}
+			catch(final Throwable ignored){System.out.println(ignored);}//? forandroid
 			reply(h_http204,null,null,null);
 			state=state_nextreq;
 		}

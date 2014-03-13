@@ -23,7 +23,7 @@ final public class b{
 	public static boolean try_rc=true;
 	public static boolean thd_watch=false;
 	public static boolean thread_pool=true;
-	public static int thread_pool_size=16;
+	public static int thread_pool_size=128;
 	public static long thread_pool_lftm=60*1000;
 	public static boolean cache_uris=true;
 	public static boolean cache_files=true;
@@ -61,6 +61,7 @@ final public class b{
 	public static PrintStream err=System.err;
 	private final static LinkedList<req>pending_req=new LinkedList<req>();
 	public static void main(final String[]args)throws Throwable{
+//		System.out.println(hello);
 		if(!class_init(b.class,args))return;
 		resources_lastmod=System.currentTimeMillis();
 		final ServerSocketChannel ssc=ServerSocketChannel.open();
@@ -74,8 +75,8 @@ final public class b{
 		ssc.register(sel,SelectionKey.OP_ACCEPT);
 		Runtime.getRuntime().addShutdownHook(new jvmsdh());
 		while(true)try{
-//			sel.select(1000);
-			sel.select();
+			sel.select(1000);
+//			sel.select();
 			thdwatch.iokeys=sel.keys().size();
 			final Iterator<SelectionKey>it=sel.selectedKeys().iterator();
 			if(!it.hasNext())continue;
