@@ -1,13 +1,20 @@
 package c.a;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.PixelFormat;
+import android.hardware.Camera;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -15,9 +22,12 @@ import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.media.MediaRecorder;
+import android.net.Uri;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore.Images.Media;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -65,6 +75,7 @@ final public class activity extends Activity implements Runnable,device,SensorEv
 		});
 		setContentView(surface);
 		sensors_oncreate();
+		camera_oncreate();
 	}
 	protected void onPause(){
 		super.onPause();
@@ -328,5 +339,40 @@ final public class activity extends Activity implements Runnable,device,SensorEv
 		mRecorder.stop();
 		mRecorder.release();
 		mRecorder=null;
+	}
+	
+	// camera
+	private Camera camera;
+	private void camera_oncreate(){
+		camera=Camera.open();
+		Camera.Parameters parameters=camera.getParameters();
+		parameters.setPictureFormat(PixelFormat.JPEG);
+		camera.setParameters(parameters);
+		final SurfaceView mview=new SurfaceView(getBaseContext());
+		try{camera.setPreviewDisplay(mview.getHolder());}catch(final Throwable t){
+			t.printStackTrace();
+		}
+	}
+	public void camera_takepicture(final String path)throws Throwable{
+//		camera=Camera.open();
+//		Camera.Parameters parameters=camera.getParameters();
+//		parameters.setPictureFormat(PixelFormat.JPEG);
+//		camera.setParameters(parameters);
+//		final SurfaceView mview=new SurfaceView(getBaseContext());
+//		camera.setPreviewDisplay(mview.getHolder());
+		camera.startPreview();
+		camera.takePicture(null,null,new Camera.PictureCallback(){
+			public void onPictureTaken(byte[]data,Camera camera){
+				camera.stopPreview();
+				FileOutputStream fos;
+				try {
+					fos=new FileOutputStream(path);
+					fos.write(data);
+					fos.close();
+				}catch (final Throwable e){
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 }
