@@ -1,9 +1,9 @@
 package c.a;
-import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
+
 import android.app.Activity;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -11,7 +11,6 @@ import android.hardware.Camera;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -198,16 +197,6 @@ final public class activity extends Activity implements Runnable,device{
 				try{Thread.sleep(t_sleep);}catch(InterruptedException ignored){}
 		}
 	}
-	public void run2(){
-//		b.b.server_port="8888";
-		b.b.root_dir=new File(Environment.getExternalStorageDirectory().getPath(),"htp").getPath();
-//		b.b.cache_files=true;
-//		b.b.cache_uris=true;
-		b.b.thd_watch=false;
-//		b.b.thread_pool_size=4;
-		try{b.b.main(new String[]{});}catch(Throwable t){throw new Error(t);}
-	}
-	
 	///
 	private void thread_start(){
 		thread=new Thread(this,cluketName);

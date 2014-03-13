@@ -45,7 +45,7 @@ public class a implements cluket,Runnable{
 //			b.b.cache_files=true;
 //			b.b.cache_uris=true;
 			b.b.thd_watch=false;
-//			b.b.thread_pool_size=4;
+			b.b.thread_pool_size=8;
 			b.b.main(new String[]{});
 	}catch(final Throwable e){throw new Error(e);}}
 }
