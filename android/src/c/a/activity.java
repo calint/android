@@ -1,6 +1,7 @@
 package c.a;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.List;
 import java.util.Locale;
 
 import android.app.Activity;
@@ -215,16 +216,24 @@ final public class activity extends Activity implements Runnable,device,SensorEv
 	
 	// sensors
 	private SensorManager sensors;
-	private Sensor sensor_geomag;
 	private Sensor sensor_accel;
-	private Sensor sensor_light;
-	private Sensor sensor_proxim;
+	private Sensor sensor_geomag;
 	private Sensor sensor_grav;
 	private Sensor sensor_gyro;
 	private Sensor sensor_linacc;
 	private Sensor sensor_rotvec;
+	private Sensor sensor_light;
+	private Sensor sensor_proxim;
+	private Sensor sensor_ambient_temp;
+	private Sensor sensor_pressure;
+	private Sensor sensor_rel_humidity;
 	private void sensors_oncreate(){
 		sensors=(SensorManager)getSystemService(Context.SENSOR_SERVICE);
+		final List<Sensor>deviceSensors=sensors.getSensorList(Sensor.TYPE_ALL);
+//		System.out.println("sensors: "+deviceSensors);
+		for(final Sensor s:deviceSensors){
+			System.out.println("sensor type "+s.getType()+"  name:"+s.getName());
+		}
 		sensor_light=sensors.getDefaultSensor(Sensor.TYPE_LIGHT);
 		sensor_geomag=sensors.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
 		sensor_proxim=sensors.getDefaultSensor(Sensor.TYPE_PROXIMITY);
@@ -233,6 +242,9 @@ final public class activity extends Activity implements Runnable,device,SensorEv
 		sensor_gyro=sensors.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
 		sensor_linacc=sensors.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
 		sensor_rotvec=sensors.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
+		sensor_ambient_temp=sensors.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
+		sensor_pressure=sensors.getDefaultSensor(Sensor.TYPE_PRESSURE);
+		sensor_rel_humidity=sensors.getDefaultSensor(Sensor.TYPE_RELATIVE_HUMIDITY);
 	}
 	private void sensors_onresume(){
 		if(sensor_light!=null)sensors.registerListener(this, sensor_light,SensorManager.SENSOR_DELAY_NORMAL);
@@ -243,6 +255,9 @@ final public class activity extends Activity implements Runnable,device,SensorEv
 		if(sensor_gyro!=null)sensors.registerListener(this,sensor_gyro,SensorManager.SENSOR_DELAY_NORMAL);
 		if(sensor_linacc!=null)sensors.registerListener(this,sensor_linacc,SensorManager.SENSOR_DELAY_NORMAL);
 		if(sensor_rotvec!=null)sensors.registerListener(this,sensor_rotvec,SensorManager.SENSOR_DELAY_NORMAL);
+		if(sensor_ambient_temp!=null)sensors.registerListener(this,sensor_ambient_temp,SensorManager.SENSOR_DELAY_NORMAL);
+		if(sensor_pressure!=null)sensors.registerListener(this,sensor_pressure,SensorManager.SENSOR_DELAY_NORMAL);
+		if(sensor_rel_humidity!=null)sensors.registerListener(this,sensor_rel_humidity,SensorManager.SENSOR_DELAY_NORMAL);
 	}
 	private void sensors_onpause(){
 		sensors.unregisterListener(this);
@@ -279,6 +294,18 @@ final public class activity extends Activity implements Runnable,device,SensorEv
 			System.out.print("rotvec: ");
 			for(float f:ev.values)System.out.print(f+"  ");
 			System.out.println();
-		} else System.out.println("unknown event "+ev);
+		}else if(ev.sensor==sensor_ambient_temp){
+			System.out.print("ambtemp: ");
+			for(float f:ev.values)System.out.print(f+"  ");
+			System.out.println();
+		}else if(ev.sensor==sensor_pressure){
+			System.out.print("preassure: ");
+			for(float f:ev.values)System.out.print(f+"  ");
+			System.out.println();
+		}else if(ev.sensor==sensor_rel_humidity){
+			System.out.print("relhumidity: ");
+			for(float f:ev.values)System.out.print(f+"  ");
+			System.out.println();
+		}else System.out.println("unknown event "+ev);
 	}
 }
