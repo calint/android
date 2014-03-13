@@ -8,5 +8,6 @@ public interface device{
 	static final class location{
 		public double longitude,latitude;
 		public float accuracy_m;
+//		public float bearing_deg;
 	}
 }

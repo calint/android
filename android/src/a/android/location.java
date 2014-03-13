@@ -8,5 +8,7 @@ public class location extends a{static final long serialVersionUID=1;public void
 		x.pl("location not available");
 		return;
 	}
-	x.p(loc.latitude).spc().p(loc.longitude).spc().p(loc.accuracy_m).nl();
+	x.p(loc.latitude).spc().p(loc.longitude).nl();
+	x.pl(" accuracy="+loc.accuracy_m+" m");
+//	x.pl(" bearing="+loc.bearing_deg+" degrees").nl();
 }}
