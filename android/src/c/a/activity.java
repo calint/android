@@ -7,6 +7,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.wifi.WifiInfo;
@@ -19,7 +23,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.Window;
 import android.view.WindowManager;
-final public class activity extends Activity implements Runnable,device{
+final public class activity extends Activity implements Runnable,device,SensorEventListener{
 	public static int dbg_level=1;
 	public static String cluketName="c.a.h.a";
 	private state state=new state();
@@ -58,11 +62,13 @@ final public class activity extends Activity implements Runnable,device{
 			}
 		});
 		setContentView(surface);
+		sensors_oncreate();
 	}
 	protected void onPause(){
 		super.onPause();
 		System.out.println("onpause");
 		thread_stop();
+		sensors_onpause();
 	}
 	protected void onResume(){
 		super.onResume();
@@ -71,6 +77,7 @@ final public class activity extends Activity implements Runnable,device{
 		w.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		w.clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
 		thread_start();
+		sensors_onresume();
 	}
 	public void onSaveInstanceState(final Bundle savedInstanceState){
 		super.onSaveInstanceState(savedInstanceState);
@@ -200,5 +207,78 @@ final public class activity extends Activity implements Runnable,device{
 //		l.bearing_deg=ll.getBearing();
 		return l;
 	}
-
+	public c.a.device.orientation orientation(){
+		final device.orientation o=new device.orientation();
+		SensorManager.getInclination(o.zxy);
+		return o;
+	}
+	
+	// sensors
+	private SensorManager sensors;
+	private Sensor sensor_geomag;
+	private Sensor sensor_accel;
+	private Sensor sensor_light;
+	private Sensor sensor_proxim;
+	private Sensor sensor_grav;
+	private Sensor sensor_gyro;
+	private Sensor sensor_linacc;
+	private Sensor sensor_rotvec;
+	private void sensors_oncreate(){
+		sensors=(SensorManager)getSystemService(Context.SENSOR_SERVICE);
+		sensor_light=sensors.getDefaultSensor(Sensor.TYPE_LIGHT);
+		sensor_geomag=sensors.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+		sensor_proxim=sensors.getDefaultSensor(Sensor.TYPE_PROXIMITY);
+		sensor_accel=sensors.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+		sensor_grav=sensors.getDefaultSensor(Sensor.TYPE_GRAVITY);
+		sensor_gyro=sensors.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+		sensor_linacc=sensors.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
+		sensor_rotvec=sensors.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
+	}
+	private void sensors_onresume(){
+		if(sensor_light!=null)sensors.registerListener(this, sensor_light,SensorManager.SENSOR_DELAY_NORMAL);
+		if(sensor_geomag!=null)sensors.registerListener(this, sensor_geomag,SensorManager.SENSOR_DELAY_NORMAL);
+		if(sensor_proxim!=null)sensors.registerListener(this, sensor_proxim,SensorManager.SENSOR_DELAY_NORMAL);
+		if(sensor_accel!=null)sensors.registerListener(this,sensor_accel,SensorManager.SENSOR_DELAY_NORMAL);
+		if(sensor_grav!=null)sensors.registerListener(this,sensor_grav,SensorManager.SENSOR_DELAY_NORMAL);
+		if(sensor_gyro!=null)sensors.registerListener(this,sensor_gyro,SensorManager.SENSOR_DELAY_NORMAL);
+		if(sensor_linacc!=null)sensors.registerListener(this,sensor_linacc,SensorManager.SENSOR_DELAY_NORMAL);
+		if(sensor_rotvec!=null)sensors.registerListener(this,sensor_rotvec,SensorManager.SENSOR_DELAY_NORMAL);
+	}
+	private void sensors_onpause(){
+		sensors.unregisterListener(this);
+	}
+	@Override public final void onAccuracyChanged(final Sensor sensor,final int accuracy){
+		System.out.println("onaccuracychanged "+accuracy);
+	}
+	@Override public final void onSensorChanged(final SensorEvent ev) {
+		if(ev.sensor==sensor_geomag){
+			System.out.print("geomag: ");
+			for(float f:ev.values)System.out.print(f+"  ");
+			System.out.println();
+		} else if(ev.sensor==sensor_proxim){
+			System.out.print("proxim: ");
+			for(float f:ev.values)System.out.print(f+"  ");
+			System.out.println();
+		} else if(ev.sensor==sensor_accel){
+			System.out.print("accel: ");
+			for(float f:ev.values)System.out.print(f+"  ");
+			System.out.println();
+		}else if(ev.sensor==sensor_grav){
+			System.out.print("grav: ");
+			for(float f:ev.values)System.out.print(f+"  ");
+			System.out.println();
+		}else if(ev.sensor==sensor_gyro){
+			System.out.print("gyro: ");
+			for(float f:ev.values)System.out.print(f+"  ");
+			System.out.println();
+		}else if(ev.sensor==sensor_linacc){
+			System.out.print("linacc: ");
+			for(float f:ev.values)System.out.print(f+"  ");
+			System.out.println();
+		}else if(ev.sensor==sensor_rotvec){
+			System.out.print("rotvec: ");
+			for(float f:ev.values)System.out.print(f+"  ");
+			System.out.println();
+		} else System.out.println("unknown event "+ev);
+	}
 }
