@@ -450,7 +450,12 @@ public final class req{
 			//				}
 			//				throw e;
 			final String msg=e.getMessage();
-			if(e instanceof IOException&&("Broken pipe".equals(msg)||"Connection reset by peer".equals(msg)||"An existing connection was forcibly closed by the remote host".equals(msg))){
+			if(e instanceof IOException&&(
+					"sendfile failed: EPIPE (Broken pipe)".equals(msg)||//? android (when closing browser while transfering file)
+					"Broken pipe".equals(msg)||
+					"Connection reset by peer".equals(msg)||
+					"An existing connection was forcibly closed by the remote host".equals(msg))
+			){
 				close();
 				return false;
 			}
