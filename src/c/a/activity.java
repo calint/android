@@ -205,6 +205,7 @@ final public class activity extends Activity implements Runnable,device,SensorEv
 		l.latitude = ll.getLatitude();
 		l.longitude = ll.getLongitude();
 		l.accuracy_m=ll.getAccuracy();
+		l.time_ms=ll.getTime();
 //		l.bearing_deg=ll.getBearing();
 		return l;
 	}

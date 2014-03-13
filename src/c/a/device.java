@@ -8,6 +8,7 @@ public interface device{
 	static final class location{
 		public double longitude,latitude;
 		public float accuracy_m;
+		public long time_ms;
 	}
 	static final class orientation{
 		public float[]zxy=new float[16];
