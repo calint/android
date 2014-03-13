@@ -14,6 +14,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationManager;
+import android.media.MediaRecorder;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
@@ -260,6 +261,8 @@ final public class activity extends Activity implements Runnable,device,SensorEv
 		if(sensor_pressure!=null)sensors.registerListener(this,sensor_pressure,SensorManager.SENSOR_DELAY_NORMAL);
 		if(sensor_rel_humidity!=null)sensors.registerListener(this,sensor_rel_humidity,SensorManager.SENSOR_DELAY_NORMAL);
 	}
+	
+	// SensorEventListener
 	private void sensors_onpause(){
 		sensors.unregisterListener(this);
 	}
@@ -308,5 +311,22 @@ final public class activity extends Activity implements Runnable,device,SensorEv
 			for(float f:ev.values)System.out.print(f+"  ");
 			System.out.println();
 		}else System.out.println("unknown event "+ev);
+	}
+	
+	// recorder
+	private MediaRecorder mRecorder=null;
+	public void recorder_start(final String path)throws Throwable{
+		mRecorder=new MediaRecorder();
+		mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+		mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+		mRecorder.setOutputFile(path);
+		mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+		mRecorder.prepare();
+		mRecorder.start();
+	}
+	public void recorder_stop()throws Throwable{
+		mRecorder.stop();
+		mRecorder.release();
+		mRecorder=null;
 	}
 }
