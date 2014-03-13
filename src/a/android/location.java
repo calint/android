@@ -10,5 +10,6 @@ public class location extends a{static final long serialVersionUID=1;public void
 	}
 	x.p(loc.latitude).spc().p(loc.longitude).nl();
 	x.pl(" accuracy="+loc.accuracy_m+" m");
+	x.a("https://maps.google.com/maps?q="+loc.latitude+","+loc.longitude,":: view on google maps");
 //	x.pl(" bearing="+loc.bearing_deg+" degrees").nl();
 }}
