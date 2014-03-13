@@ -85,5 +85,5 @@ final class chdresp{
 		byteBuffer.put(ba);
 		byteBuffer.flip();
 	}
-	boolean isvalid(long now){return now-ts<dt;}
+	boolean isvalid(final long now){return now-ts<dt;}
 }
