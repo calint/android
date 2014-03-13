@@ -79,7 +79,7 @@ final public class activity extends Activity implements Runnable,device{
 		});
 		setContentView(surface);
 		camview=new SurfaceView(this);
-		camview.getHolder().setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+//		camview.getHolder().setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 		camview.getHolder().addCallback(new SurfaceHolder.Callback(){
 			public void surfaceCreated(final SurfaceHolder holder){
 				System.out.println("camview surface created");
